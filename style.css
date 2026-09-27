@@ -38,11 +38,14 @@ p{
     list-style-type: none;
     padding-left: 0;
     margin: 0;
+    display: flex; 
+    align-items: stretch;
+    gap: 24px;
  }
 
  .calendar_box {
     padding: 20px 24px;
-    margin-bottom: 16px;
+    margin-bottom: 0px;
     border: 1px solid #ffffff;
     border-radius: 12px;
     background-color: #F5F3F7;
