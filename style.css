@@ -47,8 +47,10 @@ button:hover{
     background-color: #61398F;
 }
 
-button:focus{
-    outline: none;
+button:focus,
+input:focus{
+    outline: 3px solid #D6C6E1;
+    outline-offset: 2px;
 }
 
 button:active{
