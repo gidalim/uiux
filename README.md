@@ -7,8 +7,8 @@
 
 ### 수정 내용 
 
-- Viewprot 메타 태그를 추가
-- 콘텐츠에 Width와 max-width를 함께 사용
+- Viewport 메타 태그를 추가
+- 콘텐츠에 width와 max-width를 함께 사용
 - 캘린더에 기존 flex 디자인을 grid 디자인으로 변경
 - 768px 이하에서는 메뉴, 캘린더, 폼이 세로로 정렬된다.
 
