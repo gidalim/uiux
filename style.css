@@ -126,12 +126,13 @@ button:active{
     list-style-type: none;
     padding-left: 0;
     margin: 0;
-    display: flex; 
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 24px;
  }
 
  .calendar_box {
+    min-width: 0;
     padding: 20px 24px;
     margin-bottom: 0px;
     border: 1px solid #ffffff;
@@ -174,16 +175,6 @@ button:active{
         font-size: 28px;
     }
 
-    h3 {
-        font-size: 28px;
-    }
-
-    .calendar_list {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-
     /* 가로 메뉴를 세로로 변경 */
     nav {
         flex-direction: column;
@@ -196,13 +187,8 @@ button:active{
     }
 
     /* 캘린더 리스트를 세로로 배치 */
-
     .calendar_list {
-        flex-direction: column;
-    }
-    .calendar_box {
-        flex: 1 1 auto;
-
+        grid-template-columns: 1fr;
     }
 
     /* 폼, 버튼 */
