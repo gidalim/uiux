@@ -45,7 +45,6 @@ nav{
 
 }
 
-
 nav a{
     color: #878787;
     font-weight: 700;
@@ -76,6 +75,8 @@ p{
     color :#878787;
 }
 
+
+/* 태그 및 버튼 */
 input,
 button{
     font: inherit;
@@ -120,6 +121,7 @@ button:active{
     transform: scale(0.98);
 }
 
+/* 캘린더 리스트 */
 .calendar_list {
     list-style-type: none;
     padding-left: 0;
@@ -150,4 +152,72 @@ button:active{
     background-color: #F5F3F7;
     border: 1px solid #ffffff;
     border-radius: 12px;
+}
+
+
+/* 가로폭이 768px 이하일 경우 적용 */
+@media (max-width: 768px) {
+    body {
+        font-size: 16px;
+    }
+
+    header{
+        padding-top: 32px;
+        padding-bottom: 24px;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+
+    h3 {
+        font-size: 28px;
+    }
+
+    .calendar_list {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    /* 가로 메뉴를 세로로 변경 */
+    nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    nav a{
+        padding: 8px 0;
+    }
+
+    /* 캘린더 리스트를 세로로 배치 */
+
+    .calendar_list {
+        flex-direction: column;
+    }
+    .calendar_box {
+        flex: 1 1 auto;
+
+    }
+
+    /* 폼, 버튼 */
+    
+    form{
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input,
+    button{
+        width: 100%;
+    }
+
+    button{
+        min-height: 48px;
+    }
 }
