@@ -16,8 +16,6 @@ let Tags = {
 
 let isSubmitTag = false
 
-
-
 // 태그에 삽입될 무작위 색상 생성 함수
 function getRandomColor(){
     const letters = '0123456789ABCDEF';
@@ -37,6 +35,24 @@ function makeTagsMessage(tagName, createdTag){
     }
 }
 
+function addCreateDOM(name, color){
+    const newTags = document.createElement("li");
+    newTags.textContent = name;
+    newTags.style.color = color;
+    tagList.appendChild(newTags);
+
+    console.log(Tags);
+}
+
+function renderInitialTags(){
+    for(const [name, color] of Object.entries(Tags)){
+        addCreateDOM(name, color);
+    }
+
+    console.log("초기 태그 렌더링 완료");
+}
+
+
 function handleTagSubmit(event){
     event.preventDefault();
     const tagName = tagNameInput.value.trim();  
@@ -55,11 +71,8 @@ function handleTagSubmit(event){
             const randomColor = getRandomColor();
             Tags[tagName] = randomColor;
             tagMessage.textContent = makeTagsMessage(tagName, randomColor, true);
-
-            const newTags = document.createElement("li");
-            newTags.textContent = tagName;
-            newTags.style.color = randomColor;
-            tagList.appendChild(newTags);
+            
+            addCreateDOM(tagName, randomColor);
         }
 
         tagNameInput.value = "";
