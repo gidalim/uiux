@@ -28,10 +28,10 @@ function getRandomColor(){
 
 function makeTagsMessage(tagName, createdTag){
     if(createdTag == true){ 
-        return `"${tagName}" 태그 생성 완료!.`;
+        return `${tagName} 태그 생성 완료!`;
     }
     else if(createdTag == false){
-        return `"${tagName}" 태그가 이미 존재합니다!`;
+        return `${tagName} 태그가 이미 존재합니다!`;
     }
 }
 
@@ -63,7 +63,7 @@ function lockSubmitButton() {
         tagSubmitButton.disabled = false;
         tagSubmitButton.classList.remove("is-success", "disabled");
         tagNameInput.focus();
-    }, 1000);
+    }, 500);
 }
 
 function handleTagSubmit(event){
@@ -91,7 +91,7 @@ function handleTagSubmit(event){
             addCreateDOM(tagName, randomColor);
             lockSubmitButton(); 
         }
-
+        
         tagNameInput.value = "";
         tagNameInput.focus();
 
