@@ -166,22 +166,25 @@ button:active{
     gap: 12px;
 }
 
-#tag_submitButton{
-    color: #fdfdfd;
-}
-
-#tag_submitButton.is-success{
-    color:#245c3a;
-    background-color: #e7f7ed;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 700;
-}
-
-#tag_submitButton.disabled{
+#tagSubmitButton{
     color: #fdfdfd;
     background-color: #8B5FBF;
+    transition: background-color 0.25s ease, transform 0.15s ease, opacity 0.25s ease;
+}
+
+#tagSubmitButton.is-success{
+    color:#245c3a;
+    background-color: #e7f7ed;
+    border: 1px solid #a3e3ba;
+    font-weight: 700;
+
+}
+
+#tagSubmitButton.disabled,
+#tagSubmitButton.disabled{
     cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
 }
 
 

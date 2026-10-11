@@ -41,7 +41,7 @@ function addCreateDOM(name, color){
     newTags.style.color = color;
     tagList.appendChild(newTags);
 
-    console.log(Tags);
+    console.log("태그가 생성되었어요!", Tags);
 }
 
 function renderInitialTags(){
@@ -49,12 +49,28 @@ function renderInitialTags(){
         addCreateDOM(tagName, tagColor);
     }
 
-    console.log("초기 태그 렌더링 완료");
+    console.log("초기 태그 렌더링 완료!");
 }
 
 
+function lockSubmitButton() {
+    isSubmitTag = true;
+    tagSubmitButton.disabled = true;
+    tagSubmitButton.classList.add("is-success", "disabled");
+
+    setTimeout(() => {
+        isSubmitTag = false;
+        tagSubmitButton.disabled = false;
+        tagSubmitButton.classList.remove("is-success", "disabled");
+        tagNameInput.focus();
+    }, 1000);
+}
+
 function handleTagSubmit(event){
     event.preventDefault();
+
+    if (isSubmitTag) return;
+
     const tagName = tagNameInput.value.trim();  
 
     if(tagName === ""){
@@ -64,24 +80,23 @@ function handleTagSubmit(event){
     }
 
     if (tagName in Tags) {
-        tagMessage.textContent = makeTagsMessage(tagName, Tags[tagName], false);
-        tagMessage.textContent = "이미 존재하는 태그예요";
+        tagMessage.textContent = makeTagsMessage(tagName, false);
 
         } else {
             const randomColor = getRandomColor();
             Tags[tagName] = randomColor;
 
-            tagMessage.textContent = makeTagsMessage(tagName, randomColor, true);
-            tagMessage.textContent = `${tagName} 태그 생성 완료!`;
+            tagMessage.textContent = makeTagsMessage(tagName, true);
             
             addCreateDOM(tagName, randomColor);
+            lockSubmitButton(); 
         }
 
         tagNameInput.value = "";
         tagNameInput.focus();
 
-        console.log(Tags);
 }
+
 
 tagForm.addEventListener("submit", handleTagSubmit);
 renderInitialTags();
