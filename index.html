@@ -49,15 +49,18 @@
             <li class="calendar_box">7</li>
          </ul>
       </section>
-      <section id="tag" class="tag_list ">
+      <section id="tag" class="tag_box">
         <h2>태그</h2> 
           <h3>태그 생성</h3>
-          <form>
+          <form id="tag_form">
             <label for="tag_name">태그 이름</label>
             <input type="text" id="tag_name" name="tag_name" placeholder="이름을 작성해주세요">
-            <button type="submit">만들기</button>
+            <button id="tag_submitButton" type="submit">만들기</button>
           </form>
-            <ol> 
+            <p id="TagsMessage" aria-live="polite">
+              하단의 태그를 사용하여 일정을 구분합니다.
+            </p>
+            <ol class="tag_list" id="tag_list"> 
               <li>외부 일정</li>  
               <li>과제</li>  
               <li>강의</li>  
