@@ -24,10 +24,17 @@ const tagList = document.querySelector("#tagList");
 const tagMessage = document.querySelector("#tagMessage");
 
 
-console.log(tagForm)
-console.log(tagNameInput)
-console.log(tagSubmitButton)
-console.log(tagList)
-console.log(tagMessage) 
+function handleTagSubmit(event){
+    event.preventDefault();
+    const tagName = tagNameInput.value.trim();  
+
+    if(tagName === ""){
+        tagMessage.textContent = 
+        "태그 입력란이 비어있어요!";
+        tagNameInput.focus();
+        return;
+    }
+}
+
 
 // function isExpiredDate(date, currentDate) {}
