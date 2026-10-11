@@ -17,11 +17,17 @@ function makeTagsMessage(tagName, tagColor, createdTag){
     }
 }
 
+const tagForm = document.querySelector("#tag_form");
+const tagNameInput = document.querySelector("#tag_name");
+const tagSubmitButton = document.querySelector("#tagSubmitButton");
+const tagList = document.querySelector("#tagList");
+const tagMessage = document.querySelector("#tagMessage");
 
 
-
-console.log(Tags);
-console.log(makeTagsMessage("외부 일정", "blue", true));
-console.log(makeTagsMessage("과제", "green", false));
+console.log(tagForm)
+console.log(tagNameInput)
+console.log(tagSubmitButton)
+console.log(tagList)
+console.log(tagMessage) 
 
 // function isExpiredDate(date, currentDate) {}

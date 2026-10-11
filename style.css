@@ -147,6 +147,8 @@ button:active{
     box-sizing: border-box;
 }
 
+/* 태그 관리  */
+
 .tag_box {
     padding: 24px;
     margin-top: 32px;
@@ -155,13 +157,31 @@ button:active{
     border-radius: 12px;
 }
 
-.tag_list {
+.tagList {
     list-style-type: none;
     padding-left: 0;
     margin: 0;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+}
+
+#tag_submitButton{
+    color: #fdfdfd;
+}
+
+#tag_submitButton.is-success{
+    color:#245c3a;
+    background-color: #e7f7ed;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+#tag_submitButton.disabled{
+    color: #fdfdfd;
+    background-color: #8B5FBF;
+    cursor: not-allowed;
 }
 
 
