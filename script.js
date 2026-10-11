@@ -45,8 +45,8 @@ function addCreateDOM(name, color){
 }
 
 function renderInitialTags(){
-    for(const [name, color] of Object.entries(Tags)){
-        addCreateDOM(name, color);
+    for(const [tagName, tagColor] of Object.entries(Tags)){
+        addCreateDOM(tagName, tagColor);
     }
 
     console.log("초기 태그 렌더링 완료");
@@ -66,11 +66,14 @@ function handleTagSubmit(event){
 
     if (tagName in Tags) {
         tagMessage.textContent = makeTagsMessage(tagName, Tags[tagName], false);
+        tagMessage.textContent = "이미 존재하는 태그예요";
 
         } else {
             const randomColor = getRandomColor();
             Tags[tagName] = randomColor;
+
             tagMessage.textContent = makeTagsMessage(tagName, randomColor, true);
+            tagMessage.textContent = `${tagName} 태그 생성 완료!`;
             
             addCreateDOM(tagName, randomColor);
         }
@@ -82,5 +85,6 @@ function handleTagSubmit(event){
 }
 
 tagForm.addEventListener("submit", handleTagSubmit);
+renderInitialTags();
 
 // function isExpiredDate(date, currentDate) {}
