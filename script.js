@@ -60,7 +60,6 @@ function handleTagSubmit(event){
     if(tagName === ""){
         tagMessage.textContent = 
         "태그 입력란이 비어있어요!";
-        tagNameInput.focus();
         return;
     }
 
