@@ -10,21 +10,29 @@ const tagMessage = document.querySelector("#tagMessage");
 const themeButton = document.querySelector("#themeButton");
 
 let Tags = {
-    "외부 일정": "#FF5733", 
-    "과제": "#28a745", 
-    "강의": "#6f42c1", 
+    "외부 일정": "pink", 
+    "과제": "green", 
+    "강의": "blue", 
 };
 
 let isSubmitTag = false
 
-// 태그에 삽입될 무작위 색상 생성 함수
+const COLOR_LIST = {
+  gray:   { name: "회색",   bg: "#F1F1EF", text: "#37352F", darkBg: "#2F2F2F", darkText: "#9B9A97" },
+  brown:  { name: "갈색",   bg: "#F4EEEE", text: "#64473A", darkBg: "#432E27", darkText: "#BA856F" },
+  orange: { name: "주황색", bg: "#FAECE4", text: "#9A5B2F", darkBg: "#492F24", darkText: "#C77D48" },
+  yellow: { name: "노란색", bg: "#FBEECA", text: "#89632A", darkBg: "#40361F", darkText: "#CA984D" },
+  green:  { name: "초록색", bg: "#EEF3ED", text: "#2B593F", darkBg: "#27382B", darkText: "#529E72" },
+  blue:   { name: "파란색", bg: "#E7F3F8", text: "#28456C", darkBg: "#1F3849", darkText: "#5E87C9" },
+  purple: { name: "보라색", bg: "#F4EFF8", text: "#5F397B", darkBg: "#3B2D4A", darkText: "#9D68D3" },
+  pink:   { name: "분홍색", bg: "#F9F0F5", text: "#7C385E", darkBg: "#4E2C3F", darkText: "#C15C93" },
+  red:    { name: "빨간색", bg: "#FDEBEC", text: "#8E3532", darkBg: "#522E2A", darkText: "#EB5757" }
+};
+
+
 function getRandomColor(){
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+    const keys = Object.keys(COLOR_LIST);
+    return keys[Math.floor(Math.random() * keys.length)];
 }
 
 function makeTagsMessage(tagName, createdTag){
@@ -39,7 +47,7 @@ function makeTagsMessage(tagName, createdTag){
 function addCreateDOM(name, color){
     const newTags = document.createElement("li");
     newTags.textContent = name;
-    newTags.style.color = color;
+    newTags.classList.add(`tag-${color}`);
     tagList.appendChild(newTags);
 
     console.log("태그가 생성되었어요!", Tags);
