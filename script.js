@@ -7,6 +7,7 @@ const tagNameInput = document.querySelector("#tag_name");
 const tagSubmitButton = document.querySelector("#tagSubmitButton");
 const tagList = document.querySelector("#tagList");
 const tagMessage = document.querySelector("#tagMessage");
+const themeButton = document.querySelector("#themeButton");
 
 let Tags = {
     "외부 일정": "#FF5733", 
