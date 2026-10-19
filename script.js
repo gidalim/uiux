@@ -117,6 +117,16 @@ function renderCalendar(){
     calendarTitle.textContent = `${currentYear}년 ${currentMonth}월`;
 }
 
+prevMonthButton.addEventListener("click", () => {
+    viewDate.setMonth(viewDate.getMonth() - 1);
+    renderCalendar();
+});
+
+nextMonthButton.addEventListener("click", () => {
+    viewDate.setMonth(viewDate.getMonth() + 1);
+    renderCalendar();
+});
+
 tagForm.addEventListener("submit", handleTagSubmit);
 
 themeButton.addEventListener("click", () => {
