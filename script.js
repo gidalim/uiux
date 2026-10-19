@@ -126,7 +126,7 @@ function getWeekNumber(date) {
 
 function renderCalendar(){
     const currentYear = viewDate.getFullYear();
-    const currentMonth = viewDate.getMonth() + 1;
+    const currentMonth = viewDate.getMonth();
     const today = new Date();
 
     calendarList.innerHTML = "";
