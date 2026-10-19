@@ -333,6 +333,7 @@ body.night-mode .tagList li {
     transition: background-color 0.25s ease, transform 0.15s ease, opacity 0.25s ease;
 }
 
+/* 조금 더 적합한 색으로 변경할 것 */
 #tagSubmitButton.is-success{
     color:#245c3a;
     background-color: var(--bg-card);
@@ -394,9 +395,28 @@ body.night-mode .tagList li {
         padding: 8px 0;
     }
 
+    .calendar_weekdays {
+        gap: 4px;
+        font-size: 12px;
+    }
+
     /* 캘린더 리스트를 세로로 배치 */
     .calendar_list {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+    }
+
+    .calendar_box {
+        min-height: 55px; 
+        padding: 6px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+
+    .calendar_list.week-mode .calendar_box {
+        min-height: 85px;
+        padding: 8px;
+        font-size: 14px;
     }
 
     /* 폼, 버튼 */
