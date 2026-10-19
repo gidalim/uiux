@@ -18,15 +18,15 @@ let Tags = {
 let isSubmitTag = false
 
 const COLOR_LIST = {
-  gray:   { name: "회색",   bg: "#F1F1EF", text: "#37352F", darkBg: "#2F2F2F", darkText: "#9B9A97" },
-  brown:  { name: "갈색",   bg: "#F4EEEE", text: "#64473A", darkBg: "#432E27", darkText: "#BA856F" },
-  orange: { name: "주황색", bg: "#FAECE4", text: "#9A5B2F", darkBg: "#492F24", darkText: "#C77D48" },
-  yellow: { name: "노란색", bg: "#FBEECA", text: "#89632A", darkBg: "#40361F", darkText: "#CA984D" },
-  green:  { name: "초록색", bg: "#EEF3ED", text: "#2B593F", darkBg: "#27382B", darkText: "#529E72" },
-  blue:   { name: "파란색", bg: "#E7F3F8", text: "#28456C", darkBg: "#1F3849", darkText: "#5E87C9" },
-  purple: { name: "보라색", bg: "#F4EFF8", text: "#5F397B", darkBg: "#3B2D4A", darkText: "#9D68D3" },
-  pink:   { name: "분홍색", bg: "#F9F0F5", text: "#7C385E", darkBg: "#4E2C3F", darkText: "#C15C93" },
-  red:    { name: "빨간색", bg: "#FDEBEC", text: "#8E3532", darkBg: "#522E2A", darkText: "#EB5757" }
+  gray:   { name: "회색",   bg: "#F1F1EF", text: "#37352F", nightBg: "#2F2F2F", nightText: "#9B9A97" },
+  brown:  { name: "갈색",   bg: "#F4EEEE", text: "#64473A", nightBg: "#432E27", nightText: "#BA856F" },
+  orange: { name: "주황색", bg: "#FAECE4", text: "#9A5B2F", nightBg: "#492F24", nightText: "#C77D48" },
+  yellow: { name: "노란색", bg: "#FBEECA", text: "#89632A", nightBg: "#40361F", nightText: "#CA984D" },
+  green:  { name: "초록색", bg: "#EEF3ED", text: "#2B593F", nightBg: "#27382B", nightText: "#529E72" },
+  blue:   { name: "파란색", bg: "#E7F3F8", text: "#28456C", nightBg: "#1F3849", nightText: "#5E87C9" },
+  purple: { name: "보라색", bg: "#F4EFF8", text: "#5F397B", nightBg: "#3B2D4A", nightText: "#9D68D3" },
+  pink:   { name: "분홍색", bg: "#F9F0F5", text: "#7C385E", nightBg: "#4E2C3F", nightText: "#C15C93" },
+  red:    { name: "빨간색", bg: "#FDEBEC", text: "#8E3532", nightBg: "#522E2A", nightText: "#EB5757" }
 };
 
 
@@ -109,5 +109,12 @@ function handleTagSubmit(event){
 
 tagForm.addEventListener("submit", handleTagSubmit);
 renderInitialTags();
+
+themeButton.addEventListener("click", () => {
+    document.body.classList.toggle("night-mode");
+    const isNightMode = document.body.classList.contains("night-mode");
+    themeButton.textContent = isNightMode ? "🌙" : "☀️";
+});
+
 
 // function isExpiredDate(date, currentDate) {}

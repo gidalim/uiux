@@ -21,7 +21,7 @@
     --tag-red-bg: #FDEBEC;    --tag-red-text: #8E3532;
 }
 
-body.dark-mode {
+body.night-mode {
     --bg-page: #191919;
     --bg-card: #202020;
     --bg-border: #2F2F2F;
