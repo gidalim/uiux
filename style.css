@@ -226,13 +226,32 @@ button:active{
     transition: background-color 0.5s ease, color 0.5s ease;
 }
 
+.view_tab_group [role="tab"][aria-selected="true"] {
+    background-color: var(--primary-btn);
+    color: #FFFFFF;
+    border-color: var(--primary-btn);
+}
+
+.calendar_weekdays {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-sub);
+    font-size: 14px;
+}
+
 .calendar_list {
     list-style-type: none;
     padding-left: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
     transition: background-color 0.5s ease, color 0.5s ease;
  }
 
