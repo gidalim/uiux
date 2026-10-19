@@ -65,7 +65,11 @@
           <h3>태그 생성</h3>
           <form id="tag_form">
             <label for="tag_name">태그 이름</label>
-            <input type="text" id="tag_name" name="tag_name" placeholder="이름을 작성해주세요">
+
+            <div class="tag_input_wrapper">
+              <input type="text" id="tag_name" name="tag_name" placeholder="이름을 작성해주세요">
+              <ul class="tag_dropdown" id="tagDropdown" hidden></ul>
+            </div>
             <button id="tagSubmitButton" type="submit">만들기</button>
           </form>
             <p id="tagMessage" aria-live="polite">
