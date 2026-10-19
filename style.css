@@ -8,6 +8,40 @@
     --primary-btn: #8B5FBF;
     --primary-btn-hover: #61398F;
     --input-border: #D6C6E1;
+
+    /* 태그 색상 */
+    --tag-gray-bg: #F1F1EF;   --tag-gray-text: #37352F;
+    --tag-brown-bg: #F4EEEE;  --tag-brown-text: #64473A;
+    --tag-orange-bg: #FAECE4; --tag-orange-text: #9A5B2F;
+    --tag-yellow-bg: #FBEECA; --tag-yellow-text: #89632A;
+    --tag-green-bg: #EEF3ED;  --tag-green-text: #2B593F;
+    --tag-blue-bg: #E7F3F8;   --tag-blue-text: #28456C;
+    --tag-purple-bg: #F4EFF8; --tag-purple-text: #5F397B;
+    --tag-pink-bg: #F9F0F5;   --tag-pink-text: #7C385E;
+    --tag-red-bg: #FDEBEC;    --tag-red-text: #8E3532;
+}
+
+body.dark-mode {
+    --bg-page: #191919;
+    --bg-card: #202020;
+    --bg-border: #2F2F2F;
+    --text-main: #D4D4D4;
+    --text-sub: #9B9A97;
+    --accent-purple: #B692D6;
+    --primary-btn: #734BA3;
+    --primary-btn-hover: #5B3884;
+    --input-border: #4A3E54;    
+
+    /* 나이트 모드 태그 색상 */
+    --tag-gray-bg: #2F2F2F;   --tag-gray-text: #9B9A97;
+    --tag-brown-bg: #432E27;  --tag-brown-text: #BA856F;
+    --tag-orange-bg: #492F24; --tag-orange-text: #C77D48;
+    --tag-yellow-bg: #40361F; --tag-yellow-text: #CA984D;
+    --tag-green-bg: #27382B;  --tag-green-text: #529E72;
+    --tag-blue-bg: #1F3849;   --tag-blue-text: #5E87C9;
+    --tag-purple-bg: #3B2D4A; --tag-purple-text: #9D68D3;
+    --tag-pink-bg: #4E2C3F;   --tag-pink-text: #C15C93;
+    --tag-red-bg: #522E2A;    --tag-red-text: #EB5757;
 }
 
 
@@ -137,6 +171,12 @@ button:active{
 
 #themeButton{
     background-color: var(--bg-card);
+    color: var(--text-main);
+    border: 1px solid var(--input-border);
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
 }
 
 
@@ -166,8 +206,8 @@ button:active{
     box-sizing: border-box;
 }
 
-/* 태그 관리  */
 
+/* 태그 관리  */
 .tag_box {
     padding: 24px;
     margin-top: 32px;
@@ -201,7 +241,7 @@ button:active{
 }
 
 #tagSubmitButton.is-success{
-    color:var(--text-main);
+    color:#245c3a;
     background-color: var(--bg-card);
     border: 1px solid var(--input-border);
     font-weight: 700;
@@ -215,7 +255,16 @@ button:active{
     transform: none;
 }
 
-
+/* 태그 색상 */
+.tag-gray   { background-color: var(--tag-gray-bg);   color: var(--tag-gray-text); }
+.tag-brown  { background-color: var(--tag-brown-bg);  color: var(--tag-brown-text); }
+.tag-orange { background-color: var(--tag-orange-bg); color: var(--tag-orange-text); }
+.tag-yellow { background-color: var(--tag-yellow-bg); color: var(--tag-yellow-text); }
+.tag-green  { background-color: var(--tag-green-bg);  color: var(--tag-green-text); }
+.tag-blue   { background-color: var(--tag-blue-bg);   color: var(--tag-blue-text); }
+.tag-purple { background-color: var(--tag-purple-bg); color: var(--tag-purple-text); }
+.tag-pink   { background-color: var(--tag-pink-bg);   color: var(--tag-pink-text); }
+.tag-red    { background-color: var(--tag-red-bg);    color: var(--tag-red-text); }
 
 
 /* 가로폭이 768px 이하일 경우 적용 */
