@@ -9,8 +9,11 @@ const tagList = document.querySelector("#tagList");
 const tagMessage = document.querySelector("#tagMessage");
 const themeButton = document.querySelector("#themeButton");
 const calendarTitle = document.querySelector("#calendarTitle");
+const calendarList = document.querySelector("#calendarList");
 const prevMonthButton = document.querySelector("#prevMonthButton");
 const nextMonthButton = document.querySelector("#nextMonthButton");
+const tabMonth = document.querySelector("#tabMonth");
+const tabWeek = document.querySelector("#tabWeek");
 
 let Tags = {
     "외부 일정": "pink", 
@@ -19,6 +22,8 @@ let Tags = {
 };
 
 let viewDate = new Date();
+let currentViewMode = window.innerWidth <= 768 ? "week" : "month"; 
+
 let isSubmitTag = false
 
 const COLOR_LIST = {
@@ -110,20 +115,138 @@ function handleTagSubmit(event){
 
 }
 
+
+function getWeekNumber(date) {
+    const currentDate = date.getDate();
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    
+    return Math.ceil((currentDate + firstDay) / 7);
+
+}
+
 function renderCalendar(){
     const currentYear = viewDate.getFullYear();
     const currentMonth = viewDate.getMonth() + 1;
+    const today = new Date();
 
-    calendarTitle.textContent = `${currentYear}년 ${currentMonth}월`;
+    calendarList.innerHTML = "";
+    
+
+    // 월간모드
+    if(currentViewMode === "month"){
+
+        calendarList.classList.remove("week-mode");
+        calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월`;
+    
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const prevLastDate = new Date(currentYear, currentMonth, 0).getDate();
+    
+
+        for (let i = firstDay - 1; i >= 0; i--) {
+            const li =document.createElement("li");
+            li.className = "calendar_box prev-month";
+            li.textContent = prevLastDate - i;
+            calendarList.appendChild(li);
+        }
+
+        for (let date = 1; date <= lastDate; date++) {
+            const li = document.createElement("li");
+            li.className = "calendar_box";
+            li.textContent = date;
+
+            if(
+                currentYear === today.getFullYear() &&
+                currentMonth === today.getMonth() &&
+                date === today.getDate()
+            ) {
+                li.classList.add("is-today");
+            }
+            calendarList.appendChild(li);
+        }
+
+        const totalCells = calendarList.children.length;
+        const targetTotal = totalCells <= 35 ? 35 : 42;
+        for (let date = 1; date <= targetTotal - totalCells; date++) {
+            const li = document.createElement("li");
+            li.className = "calendar_box other-month";
+            li.textContent = date;
+            calendarList.appendChild(li);
+        }
+    } else {
+    
+    // 주간모드
+        calendarList.classList.add("week-mode");
+
+        const weekNum = getWeekNumber(viewDate);
+        calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월 ${weekNum}주차`;
+
+        const currentDay = viewDate.getDay();
+        const startOfWeek = new Date(viewDate);
+        startOfWeek.setDate(viewDate.getDate() - currentDay);
+
+        for (let i = 0; i < 7; i++) {
+            const dayDate = new Date(startOfWeek);
+            dayDate.setDate(startOfWeek.getDate() + i);
+
+            const li = document.createElement("li");
+            li.className = "calendar_box"
+            li.textContent = dayDate.getDate();
+
+            if (dayDate.getMonth() !== currentMonth) {
+                li.classList.add("other-month");
+            }
+
+            if (
+                dayDate.getFullYear() === today.getFullYear() &&
+                dayDate.getMonth() === today.getMonth() &&
+                dayDate.getDate() === today.getDate()
+             ) {
+                li.classList.add("is-today");
+            }
+
+            calendarList.appendChild(li);         
+        }
+    } 
 }
 
+function switchCalendarView(mode){
+    currentViewMode = mode;
+
+    if (mode === "month"){
+        tabMonth.setAttribute("aria-selected", "true");
+        tabMonth.setAttribute("tabindex", "0");
+        tabWeek.setAttribute("aria-selected", "false");
+        tabWeek.setAttribute("tabindex", "-1");
+      } else {
+        tabWeek.setAttribute("aria-selected", "true");
+        tabWeek.setAttribute("tabindex", "0");
+        tabMonth.setAttribute("aria-selected", "false");
+        tabMonth.setAttribute("tabindex", "-1");
+    }
+
+    renderCalendar();
+}
+
+tabMonth.addEventListener("click", () => switchCalendarView("month"));
+tabWeek.addEventListener("click", () => switchCalendarView("week"));
+
+
 prevMonthButton.addEventListener("click", () => {
-    viewDate.setMonth(viewDate.getMonth() - 1);
+if (currentViewMode === "month") {
+      viewDate.setMonth(viewDate.getMonth() - 1);
+    } else {
+      viewDate.setDate(viewDate.getDate() - 7); // 1주일 전으로 이동
+    }
     renderCalendar();
 });
 
 nextMonthButton.addEventListener("click", () => {
-    viewDate.setMonth(viewDate.getMonth() + 1);
+if (currentViewMode === "month") {
+      viewDate.setMonth(viewDate.getMonth() + 1);
+    } else {
+      viewDate.setDate(viewDate.getDate() + 7); // 1주일 뒤로 이동
+    }
     renderCalendar();
 });
 
@@ -135,6 +258,7 @@ themeButton.addEventListener("click", () => {
     themeButton.textContent = isNightMode ? "🌙" : "☀️";
 });
 
+switchCalendarView(currentViewMode);
 renderInitialTags();
 renderCalendar();
 // function isExpiredDate(date, currentDate) {}
