@@ -257,14 +257,34 @@ button:active{
 
  .calendar_box {
     min-width: 0;
-    padding: 20px 24px;
-    margin-bottom: 0px;
+    min-height: 85px;
+    padding: 12px;
     border: 1px solid var(--bg-border);
     border-radius: 12px;
     background-color: var(--bg-card);
-    transition: background-color 0.5s ease, color 0.5s ease;
- }
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
 
+.calendar_list.week-mode .calendar_box {
+    min-height: 140px;
+    padding: 16px;
+    font-size: 18px;
+}
+
+.calendar_box.other-month,
+.calendar_box.prev-month {
+    opacity: 0.35;
+}
+
+.calendar_box.is-today {
+    border: 2px solid var(--accent-purple);
+    box-shadow: 0 0 8px rgba(154, 115, 181, 0.25);
+}
 
  *,
  *::before,
