@@ -78,9 +78,25 @@
       </section>
       <section id="detail">
         <h2>개발자 페이지</h2>
-        <a href="https://github.com/gidalim/uiux" target="_blank">
-          <img src="assets/images/github_mark.png" alt="깃허브 일러스트">
-        </a>
+        <p>깃허브에서 프로젝트 소스 코드를 확인 할 수 있어요</p>
+        <div class="developer_box">
+          <form id="devAccessForm" class="dev_form">
+            <label class="dev_checkbox_label">
+              <input type="checkbox" id="accessCheckbox">
+              <span>페이지에 방문하시겠어요?</span>
+            </label>
+            <button type="submit" id="accessButton" disabled>깃허브 링크 확인</button>
+          </form>
+          <div id="devLoading" class="dev_loading" hidden aria-live="polite">
+           <div class="spinner"></div>
+           <p>개발자 정보를 불러오는 중입니다...</p>
+         </div>
+          <div id="githubLinkCard" class="github_link_card" hidden>
+            <a href="https://github.com/gidalim/uiux" target="_blank" rel="noopener noreferrer">
+              <img src="assets/images/github_mark.png" alt="깃허브 일러스트">
+            </a>
+          </div>
+        </div>
       </section>
     </main>
   <footer>

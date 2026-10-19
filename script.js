@@ -15,6 +15,11 @@ const nextMonthButton = document.querySelector("#nextMonthButton");
 const tabMonth = document.querySelector("#tabMonth");
 const tabWeek = document.querySelector("#tabWeek");
 const tagDropDown = document.querySelector("#tagDropdown");
+const accessCheckbox = document.querySelector("#accessCheckbox");
+const accessButton = document.querySelector("#accessButton");
+const devAccessForm = document.querySelector("#devAccessForm");
+const devLoading = document.querySelector("#devLoading");
+const githubLinkCard = document.querySelector("#githubLinkCard");
 
 let Tags = {
     "외부 일정": "pink", 
@@ -306,6 +311,26 @@ document.addEventListener("click", (event) => {
   if (!event.target.closest(".tag_input_wrapper")) {
     tagDropdown.hidden = true;
   }
+});
+
+accessCheckbox.addEventListener("change", (event) => {
+  accessButton.disabled = !event.target.checked;
+});
+
+devAccessForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (!accessCheckbox.checked) return;
+
+  // 폼 숨기고 로딩 스피너 표시
+  devAccessForm.hidden = true;
+  devLoading.hidden = false;
+
+  // 1.2초 뒤 링크 카드 출력
+  setTimeout(() => {
+    devLoading.hidden = true;
+    githubLinkCard.hidden = false;
+  }, 1200);
 });
 
 switchCalendarView(currentViewMode);
