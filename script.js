@@ -14,6 +14,7 @@ const prevMonthButton = document.querySelector("#prevMonthButton");
 const nextMonthButton = document.querySelector("#nextMonthButton");
 const tabMonth = document.querySelector("#tabMonth");
 const tabWeek = document.querySelector("#tabWeek");
+const tagDropDown = document.querySelector("#tagDropdown");
 
 let Tags = {
     "외부 일정": "pink", 
@@ -228,6 +229,41 @@ function switchCalendarView(mode){
     renderCalendar();
 }
 
+function renderTagDropdown(filterKeyword = "") {
+  tagDropdown.innerHTML = "";
+  const keyword = filterKeyword.toLowerCase().trim();
+
+  const matchedTags = Object.entries(Tags).filter(([tagName]) => 
+    tagName.toLowerCase().includes(keyword)
+  );
+
+  if (matchedTags.length === 0) {
+    const emptyLi = document.createElement("li");
+    emptyLi.textContent = `"${filterKeyword}" 새 태그로 만들기`;
+    emptyLi.style.color = "var(--text-sub)";
+    emptyLi.style.cursor = "default";
+    tagDropdown.appendChild(emptyLi);
+  } else {
+    matchedTags.forEach(([tagName, colorKey]) => {
+      const li = document.createElement("li");
+      li.textContent = tagName;
+      li.classList.add(`tag-${colorKey}`); 
+
+      li.addEventListener("mousedown", (e) => {
+        e.preventDefault(); 
+        tagNameInput.value = tagName;
+        tagDropdown.hidden = true;
+        tagNameInput.focus();
+      });
+
+      tagDropdown.appendChild(li);
+    });
+  }
+
+  tagDropdown.hidden = false;
+}
+
+
 tabMonth.addEventListener("click", () => switchCalendarView("month"));
 tabWeek.addEventListener("click", () => switchCalendarView("week"));
 
@@ -250,12 +286,26 @@ if (currentViewMode === "month") {
     renderCalendar();
 });
 
-tagForm.addEventListener("submit", handleTagSubmit);
-
 themeButton.addEventListener("click", () => {
     document.body.classList.toggle("night-mode");
     const isNightMode = document.body.classList.contains("night-mode");
     themeButton.textContent = isNightMode ? "🌙" : "☀️";
+});
+
+tagForm.addEventListener("submit", handleTagSubmit);
+
+tagNameInput.addEventListener("focus", () => {
+  renderTagDropdown(tagNameInput.value);
+});
+
+tagNameInput.addEventListener("input", (event) => {
+  renderTagDropdown(event.target.value);
+});
+
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".tag_input_wrapper")) {
+    tagDropdown.hidden = true;
+  }
 });
 
 switchCalendarView(currentViewMode);
