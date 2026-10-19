@@ -319,6 +319,12 @@ button:active{
     font-size: 14px;
     display: inline-flex;
     align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+body.night-mode .tagList li {
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 #tagSubmitButton{
