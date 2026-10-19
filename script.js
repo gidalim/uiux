@@ -8,6 +8,9 @@ const tagSubmitButton = document.querySelector("#tagSubmitButton");
 const tagList = document.querySelector("#tagList");
 const tagMessage = document.querySelector("#tagMessage");
 const themeButton = document.querySelector("#themeButton");
+const calendarTitle = document.querySelector("#calendarTitle");
+const prevMonthButton = document.querySelector("#prevMonthButton");
+const nextMonthButton = document.querySelector("#nextMonthButton");
 
 let Tags = {
     "외부 일정": "pink", 
@@ -15,6 +18,7 @@ let Tags = {
     "강의": "blue", 
 };
 
+let viewDate = new Date();
 let isSubmitTag = false
 
 const COLOR_LIST = {
@@ -106,9 +110,14 @@ function handleTagSubmit(event){
 
 }
 
+function renderCalendar(){
+    const currentYear = viewDate.getFullYear();
+    const currentMonth = viewDate.getMonth() + 1;
+
+    calendarTitle.textContent = `${currentYear}년 ${currentMonth}월`;
+}
 
 tagForm.addEventListener("submit", handleTagSubmit);
-renderInitialTags();
 
 themeButton.addEventListener("click", () => {
     document.body.classList.toggle("night-mode");
@@ -116,5 +125,6 @@ themeButton.addEventListener("click", () => {
     themeButton.textContent = isNightMode ? "🌙" : "☀️";
 });
 
-
+renderInitialTags();
+renderCalendar();
 // function isExpiredDate(date, currentDate) {}

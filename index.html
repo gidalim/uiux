@@ -38,16 +38,13 @@
           <p>태그와 짧은 내용을 통해 직관적 서비스를 제공합니다</p>
       </section>
       <section id="calendar"> 
-        <h2>월</h2>
         <!-- 캘린더 박스 -->
+        <div class="calendar_header">
+          <button id="prevMonthButton" type="button" aria-label="이전 달">◀</button>
+          <h2 id="calendarTitle" aria-label="년 월 입력">캘린더</h2>
+          <button id="nextMonthButton" type="button" aria-label="다음 달">▶</button>
+        </div>
          <ul class="calendar_list">
-            <li class="calendar_box">1</li>
-            <li class="calendar_box">2</li>
-            <li class="calendar_box">3</li>
-            <li class="calendar_box">4</li>
-            <li class="calendar_box">5</li>
-            <li class="calendar_box">6</li>
-            <li class="calendar_box">7</li>
          </ul>
       </section>
       <section id="tag" class="tag_box">
