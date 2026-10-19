@@ -10,15 +10,15 @@
     --input-border: #D6C6E1;
 
     /* 태그 색상 */
-    --tag-gray-bg: #F1F1EF;   --tag-gray-text: #37352F;
-    --tag-brown-bg: #F4EEEE;  --tag-brown-text: #64473A;
-    --tag-orange-bg: #FAECE4; --tag-orange-text: #9A5B2F;
-    --tag-yellow-bg: #FBEECA; --tag-yellow-text: #89632A;
-    --tag-green-bg: #EEF3ED;  --tag-green-text: #2B593F;
-    --tag-blue-bg: #E7F3F8;   --tag-blue-text: #28456C;
-    --tag-purple-bg: #F4EFF8; --tag-purple-text: #5F397B;
-    --tag-pink-bg: #F9F0F5;   --tag-pink-text: #7C385E;
-    --tag-red-bg: #FDEBEC;    --tag-red-text: #8E3532;
+    --tag-gray-bg: #E3E2E0;   --tag-gray-text: #201F1D;
+    --tag-brown-bg: #EBDAD4;  --tag-brown-text: #4E3227;
+    --tag-orange-bg: #F8D8C8; --tag-orange-text: #7D421B;
+    --tag-yellow-bg: #F7E5A9; --tag-yellow-text: #6B4A18;
+    --tag-green-bg: #D4E8D4;  --tag-green-text: #1E4630;
+    --tag-blue-bg: #CCE5F3;   --tag-blue-text: #1C3658;
+    --tag-purple-bg: #E7DAF2; --tag-purple-text: #4C2668;
+    --tag-pink-bg: #F5D5E6;   --tag-pink-text: #68264C;
+    --tag-red-bg: #FBCFD1;    --tag-red-text: #752522;
 }
 
 body.night-mode {
@@ -217,6 +217,7 @@ button:active{
     background-color: var(--bg-card);
     border: 1px solid var(--bg-border);
     border-radius: 12px;
+    transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 .tagList {
