@@ -347,7 +347,127 @@ devAccessForm.addEventListener("submit", (event) => {
   }, 1200);
 });
 
+const TUTORIAL_STEPS = [
+  {
+    targetSelector: "#calendar",
+    title: "캘린더 뷰 모드 전환",
+    desc: "월간 뷰와 주간 뷰를 전환해 보세요. 모바일 접속 시 주간 뷰가 기본 적용됩니다.",
+    position: "bottom"
+  },
+  {
+    targetSelector: "#tag_form",
+    title: "태그 자동완성 및 생성",
+    desc: "입력창을 클릭하면 기존 태그 목록이 펼쳐지며, 검색 및 새 태그 등록이 가능합니다.",
+    position: "bottom"
+  },
+  {
+    targetSelector: "#devAccessForm",
+    title: "개발자 페이지 체크박스 연동",
+    desc: "하단의 체크박스를 통해 깃허브 소스코드를 확인할 수 있어요.",
+    position: "top"
+  }
+];
+
+let currentTutorialStep = 0;
+
+function checkOnboardingStatus() {
+  const hasVisited = sessionStorage.getItem("calendar_service_visited");
+  if (!hasVisited) {
+    onboardingIntro.hidden = false;
+  }
+}
+
+function completeOnboarding() {
+  sessionStorage.setItem("calendar_service_visited", "true");
+  onboardingIntro.hidden = true;
+  tutorialOverlay.hidden = true;
+}
+
+function renderTutorialStep(stepIndex) {
+  const step = TUTORIAL_STEPS[stepIndex];
+  const targetEl = document.querySelector(step.targetSelector);
+  if (!targetEl) return;
+
+  targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  setTimeout(() => {
+    const rect = targetEl.getBoundingClientRect();
+    const scrollY = window.scrollY;
+    const scrollX = window.scrollX;
+    const padding = 8;
+
+    spotlightBox.style.top = `${rect.top + scrollY - padding}px`;
+    spotlightBox.style.left = `${rect.left + scrollX - padding}px`;
+    spotlightBox.style.width = `${rect.width + padding * 2}px`;
+    spotlightBox.style.height = `${rect.height + padding * 2}px`;
+
+    tutorialStepBadge.textContent = `Step ${stepIndex + 1}/${TUTORIAL_STEPS.length}`;
+    tutorialTitle.textContent = step.title;
+    tutorialDesc.textContent = step.desc;
+
+    prevStepBtn.disabled = stepIndex === 0;
+    nextStepBtn.textContent = stepIndex === TUTORIAL_STEPS.length - 1 ? "완료" : "다음";
+
+    if (window.innerWidth > 768) {
+      if (step.position === "bottom") {
+        tutorialTooltip.style.top = `${rect.bottom + scrollY + 16}px`;
+        tutorialTooltip.style.left = `${rect.left + scrollX}px`;
+      } else {
+        tutorialTooltip.style.top = `${rect.top + scrollY - tutorialTooltip.offsetHeight - 16}px`;
+        tutorialTooltip.style.left = `${rect.left + scrollX}px`;
+      }
+    }
+  }, 250);
+}
+
+function goToNextStep() {
+  if (currentTutorialStep < TUTORIAL_STEPS.length - 1) {
+    currentTutorialStep++;
+    renderTutorialStep(currentTutorialStep);
+  } else {
+    completeOnboarding();
+  }
+}
+
+function goToPrevStep() {
+  if (currentTutorialStep > 0) {
+    currentTutorialStep--;
+    renderTutorialStep(currentTutorialStep);
+  }
+}
+
+startTutorialBtn.addEventListener("click", () => {
+  onboardingIntro.hidden = true;
+  tutorialOverlay.hidden = false;
+  currentTutorialStep = 0;
+  renderTutorialStep(0);
+});
+
+skipIntroBtn.addEventListener("click", completeOnboarding);
+nextStepBtn.addEventListener("click", goToNextStep);
+prevStepBtn.addEventListener("click", goToPrevStep);
+skipTutorialBtn.addEventListener("click", completeOnboarding);
+closeTutorialBtn.addEventListener("click", completeOnboarding);
+
+spotlightBox.addEventListener("click", () => {
+  goToNextStep();
+});
+
+restartTutorialBtn.addEventListener("click", () => {
+  sessionStorage.removeItem("calendar_service_visited");
+  currentTutorialStep = 0;
+  tutorialOverlay.hidden = false;
+  renderTutorialStep(0);
+});
+
+window.addEventListener("resize", () => {
+  if (!tutorialOverlay.hidden) {
+    renderTutorialStep(currentTutorialStep);
+  }
+});
+
+
 switchCalendarView(currentViewMode);
 renderInitialTags();
 renderCalendar();
-// function isExpiredDate(date, currentDate) {}
+checkOnboardingStatus();
