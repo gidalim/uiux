@@ -1,5 +1,8 @@
 ## 8주차 추가 로직
 
+배포 웹사이트 주소 : https://gidalim.github.io/uiux/
+깃허브 주소 : https://github.com/gidalim/uiux
+
 ### 확인할 문제
 
 7주차 튜토리얼에 이어서 일정을 등록/삭제하는 로직을 추가
