@@ -392,50 +392,76 @@ function checkOnboardingStatus() {
   }
 }
 
+function updateSpotlightPosition(targetEl, step) {
+  const rect = targetEl.getBoundingClientRect();
+  const padding = 10;
+
+  spotlightBox.style.top = `${rect.top - padding}px`;
+  spotlightBox.style.left = `${rect.left - padding}px`;
+  spotlightBox.style.width = `${rect.width + padding * 2}px`;
+  spotlightBox.style.height = `${rect.height + padding * 2}px`;
+
+  if (window.innerWidth > 768) {
+    if (step.position === "bottom") {
+      const topPos = Math.min(window.innerHeight - 220, rect.bottom + 16);
+      tutorialTooltip.style.top = `${topPos}px`;
+      tutorialTooltip.style.left = `${Math.max(20, rect.left)}px`;
+    } else {
+      const tooltipHeight = tutorialTooltip.offsetHeight || 190;
+      const topPos = Math.max(20, rect.top - tooltipHeight - 16);
+      tutorialTooltip.style.top = `${topPos}px`;
+      tutorialTooltip.style.left = `${Math.max(20, rect.left)}px`;
+    }
+  }
+}
 
 function renderTutorialStep(stepIndex) {
   const step = TUTORIAL_STEPS[stepIndex];
   const targetEl = document.querySelector(step.targetSelector);
   if (!targetEl) return;
 
+  tutorialStepBadge.textContent = `Step ${stepIndex + 1}/${TUTORIAL_STEPS.length}`;
+  tutorialTitle.textContent = step.title;
+  tutorialDesc.textContent = step.desc;
+
+  prevStepBtn.disabled = stepIndex === 0;
+  nextStepBtn.textContent = stepIndex === TUTORIAL_STEPS.length - 1 ? "완료" : "다음";
+
   const targetRect = targetEl.getBoundingClientRect();
   const absoluteTargetTop = window.scrollY + targetRect.top;
   const middleScroll = absoluteTargetTop - (window.innerHeight / 2) + (targetRect.height / 2);
+  const targetScrollTop = Math.max(0, middleScroll);
 
-  window.scrollTo({
-    top: Math.max(0, middleScroll),
-    behavior: "smooth"
-  });
+  let scrollTimeout = null;
 
-  setTimeout(() => {
-    const rect = targetEl.getBoundingClientRect();
-    const padding = 10;
+  function onScrollFinished() {
+    window.removeEventListener("scroll", handleScroll);
+    updateSpotlightPosition(targetEl, step);
+  }
 
-    spotlightBox.style.top = `${rect.top - padding}px`;
-    spotlightBox.style.left = `${rect.left - padding}px`;
-    spotlightBox.style.width = `${rect.width + padding * 2}px`;
-    spotlightBox.style.height = `${rect.height + padding * 2}px`;
+  function handleScroll() {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(onScrollFinished, 100); 
+  }
 
-    tutorialStepBadge.textContent = `Step ${stepIndex + 1}/${TUTORIAL_STEPS.length}`;
-    tutorialTitle.textContent = step.title;
-    tutorialDesc.textContent = step.desc;
+  if (Math.abs(window.scrollY - targetScrollTop) < 5) {
+    updateSpotlightPosition(targetEl, step);
+  } else {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    scrollTimeout = setTimeout(onScrollFinished, 400);
 
-    prevStepBtn.disabled = stepIndex === 0;
-    nextStepBtn.textContent = stepIndex === TUTORIAL_STEPS.length - 1 ? "완료" : "다음";
-
-    if (window.innerWidth > 768) {
-      if (step.position === "bottom") {
-        const topPos = Math.min(window.innerHeight - 220, rect.bottom + 16);
-        tutorialTooltip.style.top = `${topPos}px`;
-        tutorialTooltip.style.left = `${Math.max(20, rect.left)}px`;
-      } else {
-        const topPos = Math.max(20, rect.top - 200);
-        tutorialTooltip.style.top = `${topPos}px`;
-        tutorialTooltip.style.left = `${Math.max(20, rect.left)}px`;
-      }
-    }
-  }, 320);
+    window.scrollTo({
+      top: targetScrollTop,
+      behavior: "smooth"
+    });
+  }
 }
+
+restartTutorialBtn.addEventListener("click", () => {
+  sessionStorage.removeItem("calendar_service_visited");
+  window.scrollTo({ top: 0, behavior: "instant" });
+  openTutorial();
+});
 
 function goToNextStep() {
   if (currentTutorialStep < TUTORIAL_STEPS.length - 1) {
