@@ -495,7 +495,31 @@ body.night-mode .tagList li {
     width: 100%;
     padding: 24px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    text-align: left;
 }
+#scheduleForm {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+}
+
+#scheduleForm .form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+}
+
+#scheduleForm input,
+#scheduleForm select {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+
 
 .modal_header {
     display: flex;
@@ -551,12 +575,44 @@ body.night-mode .tagList li {
 
 .modal_actions {
     display: flex;
-    gap: 10px;
     justify-content: flex-end;
-    margin-top: 20px;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
 }
 
-/* 등록된 일정 목록 영역 */
+.modal_actions button {
+    width: auto !important;
+    min-width: 80px;
+    min-height: 40px !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    flex: initial !important; 
+}
+
+.modal_actions .btn_secondary {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border: 1px solid var(--input-border);
+}
+
+.modal_actions .btn_secondary:hover {
+    background-color: var(--input-border);
+}
+
+.modal_actions .btn_primary {
+    background-color: var(--primary-btn);
+    color: #ffffff;
+    border: none;
+}
+
+.modal_actions .btn_primary:hover {
+    background-color: var(--primary-btn-hover);
+}
+
 .existing_schedule_area {
     margin-top: 20px;
     padding-top: 16px;
@@ -1023,9 +1079,18 @@ body.scroll-lock {
 
   .modal_card {
         padding: 20px 16px;
-    }
-    .modal_actions button {
-        min-height: 44px;
-        flex: 1;
-    }
+  }
+  .modal_actions {
+        display: flex;
+        flex-direction: row; 
+        justify-content: flex-end;
+        gap: 8px;
+  }
+    
+  .modal_actions button {
+        width: auto !important;
+        flex: 1 !important; 
+        min-height: 42px !important;
+  }
+
 }
