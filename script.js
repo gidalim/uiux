@@ -52,7 +52,7 @@ let Tags = {
 };
 
 let Schedules = {
-  "2026-10-24": [
+  "2026-10-25": [
     { id: 1, text: "UI/UX 중간 과제 제출", tag: "과제", color: "green" }
   ]
 };
@@ -246,8 +246,18 @@ function renderCalendar(){
             dayDate.setDate(startOfWeek.getDate() + i);
 
             const li = document.createElement("li");
-            li.className = "calendar_box"
-            li.textContent = dayDate.getDate();
+            li.className = "calendar_box";
+
+            const dateKey = formatDateKey(
+                dayDate.getFullYear(),
+                dayDate.getMonth(),
+                dayDate.getDate()
+            );
+
+            const numSpan = document.createElement("span");
+            numSpan.className = "date_num";
+            numSpan.textContent = dayDate.getDate();
+            li.appendChild(numSpan);
 
             if (dayDate.getMonth() !== currentMonth) {
                 li.classList.add("other-month");
@@ -257,11 +267,29 @@ function renderCalendar(){
                 dayDate.getFullYear() === today.getFullYear() &&
                 dayDate.getMonth() === today.getMonth() &&
                 dayDate.getDate() === today.getDate()
-             ) {
+            ) {
                 li.classList.add("is-today");
             }
 
-            calendarList.appendChild(li);         
+            const badgeUl = document.createElement("ul");
+            badgeUl.className = "schedule_badge_list";
+
+            if (Schedules[dateKey]) {
+                Schedules[dateKey].forEach(item => {
+                    const badgeLi = document.createElement("li");
+                    badgeLi.className = `schedule_badge tag-${item.color}`;
+                    badgeLi.textContent = item.text;
+                    badgeUl.appendChild(badgeLi);
+                });
+            }
+            li.appendChild(badgeUl);
+
+            li.addEventListener("click", () => {
+                const displayStr = `${dayDate.getFullYear()}년 ${dayDate.getMonth() + 1}월 ${dayDate.getDate()}일`;
+                openScheduleModal(dateKey, displayStr);
+            });
+
+            calendarList.appendChild(li);
         }
     } 
 }
@@ -594,7 +622,7 @@ function renderExistingSchedules(dateKey) {
     li.className = `existing_schedule_item tag-${item.color}`;
     li.innerHTML = `
       <span>[${item.tag}] ${item.text}</span>
-      <span class="delete_hint">삭제 ✕</span>
+      <span class="delete_hint">삭제</span>
     `;
 
     li.addEventListener("click", () => {
