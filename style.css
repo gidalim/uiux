@@ -705,32 +705,34 @@ body.scroll-lock {
 /* 가로폭 768px 이하 모바일 반응형 */
 @media (max-width: 768px) {
     body {
-        font-size: 16px;
+        font-size: 15px;
     }
 
-    header{
-        padding-top: 32px;
-        padding-bottom: 24px;
+    header {
+        padding-top: 28px;
+        padding-bottom: 20px;
     }
 
     h1 {
-        font-size: 36px;
+        font-size: 32px;
     }
 
     h2 {
-        font-size: 28px;
+        font-size: 24px;
     }
 
+    /* 네비게이션 메뉴 */
     nav {
         flex-direction: column;
         align-items: stretch;
         gap: 8px;
     }
 
-    nav a{
+    nav a {
         padding: 8px 0;
     }
 
+    /* 캘린더 요일 및 날짜 박스 */
     .calendar_weekdays {
         gap: 4px;
         font-size: 12px;
@@ -754,18 +756,15 @@ body.scroll-lock {
         font-size: 14px;
     }
 
-    form{
+    form {
         flex-direction: column;
         align-items: stretch;
     }
 
-    input,
-    button{
+    form input,
+    form button {
         width: 100%;
-    }
-
-    button{
-        min-height: 48px;
+        min-height: 46px;
     }
 
     .onboarding_card {
@@ -774,12 +773,78 @@ body.scroll-lock {
 
     .intro_actions {
         flex-direction: column;
+        gap: 10px;
+    }
+
+    .intro_actions button {
+        width: 100%;
+        min-height: 46px;
     }
 
     .tutorial_tooltip {
-        width: calc(100vw - 32px);
-        left: 16px !important;
-        bottom: 24px !important;
-        top: auto !important;
-    }
+    width: calc(100vw - 32px) !important;
+    left: 16px !important;
+    right: 16px !important;
+    top: 16px !important;     
+    bottom: auto !important;  
+    padding: 16px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .tutorial_tooltip h3 {
+    font-size: 16px;
+    margin: 0 0 6px;
+  }
+
+  .tutorial_tooltip p {
+    font-size: 13px;
+    line-height: 1.45;
+    margin: 0 0 14px;
+  }
+
+  .tooltip_footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tooltip_right_btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .tutorial_tooltip button {
+    width: auto !important;
+    min-height: auto !important;
+    white-space: nowrap !important;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .btn_nav {
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 8px;
+  }
+
+  .btn_text {
+    font-size: 13px;
+    padding: 8px 10px;
+    color: var(--text-sub);
+  }
+
+  .tooltip_right_btns .btn_primary {
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+
+  .btn_close {
+    font-size: 18px;
+    padding: 4px;
+  }
 }

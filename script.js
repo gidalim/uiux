@@ -383,7 +383,7 @@ function completeOnboarding() {
   onboardingIntro.hidden = true;
   tutorialOverlay.hidden = true;
   document.body.classList.remove("scroll-lock");
-  
+
   window.scrollTo({
     top: 0,
     behavior: "smooth"})
@@ -399,7 +399,6 @@ function checkOnboardingStatus() {
 function updateSpotlightPosition(targetEl, step) {
   const rect = targetEl.getBoundingClientRect();
   const padding = 10;
-
   spotlightBox.style.top = `${rect.top - padding}px`;
   spotlightBox.style.left = `${rect.left - padding}px`;
   spotlightBox.style.width = `${rect.width + padding * 2}px`;
@@ -416,6 +415,9 @@ function updateSpotlightPosition(targetEl, step) {
       tutorialTooltip.style.top = `${topPos}px`;
       tutorialTooltip.style.left = `${Math.max(20, rect.left)}px`;
     }
+  } else {
+    tutorialTooltip.style.top = "";
+    tutorialTooltip.style.left = "";
   }
 }
 
@@ -445,14 +447,14 @@ function renderTutorialStep(stepIndex) {
 
   function handleScroll() {
     clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(onScrollFinished, 100); 
+    scrollTimeout = setTimeout(onScrollFinished, 60); 
   }
 
   if (Math.abs(window.scrollY - targetScrollTop) < 5) {
     updateSpotlightPosition(targetEl, step);
   } else {
     window.addEventListener("scroll", handleScroll, { passive: true });
-    scrollTimeout = setTimeout(onScrollFinished, 400);
+    scrollTimeout = setTimeout(onScrollFinished, 200);
 
     window.scrollTo({
       top: targetScrollTop,
@@ -505,9 +507,9 @@ restartTutorialBtn.addEventListener("click", () => {
 });
 
 window.addEventListener("resize", () => {
-  if (!tutorialOverlay.hidden) {
-    renderTutorialStep(currentTutorialStep);
-  }
+    if (!tutorialOverlay.hidden) {
+      renderTutorialStep(currentTutorialStep);
+    }
 });
 
 
