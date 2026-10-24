@@ -24,6 +24,15 @@ const onboardingIntro = document.querySelector("#onboardingIntro");
 const startTutorialBtn = document.querySelector("#startTutorialBtn");
 const skipIntroBtn = document.querySelector("#skipIntroBtn");
 const restartTutorialBtn = document.querySelector("#restartTutorialBtn");
+const spotlightBox = document.querySelector("#spotlightBox");
+const tutorialTooltip = document.querySelector("#tutorialTooltip");
+const tutorialStepBadge = document.querySelector("#tutorialStepBadge");
+const closeTutorialBtn = document.querySelector("#closeTutorialBtn");
+const tutorialTitle = document.querySelector("#tutorialTitle");
+const tutorialDesc = document.querySelector("#tutorialDesc");
+const prevStepBtn = document.querySelector("#prevStepBtn");
+const nextStepBtn = document.querySelector("#nextStepBtn");
+const skipTutorialBtn = document.querySelector("#skipTutorialBtn");
 
 
 let Tags = {

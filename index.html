@@ -116,7 +116,26 @@
       </div>
     </div>
   </div>
-  
+  <div id="tutorialOverlay" class="tutorial_overlay" hidden>
+    <div id="spotlightBox" class="spotlight_box" title="클릭하여 다음 단계로 이동"></div>
+
+    <div id="tutorialTooltip" class="tutorial_tooltip" role="region" aria-live="polite">
+      <div class="tooltip_header">
+        <span id="tutorialStepBadge" class="step_badge">Step 1/3</span>
+        <button id="closeTutorialBtn" type="button" class="btn_close" aria-label="튜토리얼 종료">✕</button>
+      </div>
+      <h3 id="tutorialTitle">제목</h3>
+      <p id="tutorialDesc">설명 문구</p>
+      
+      <div class="tooltip_footer">
+        <button id="prevStepBtn" type="button" class="btn_nav" disabled>이전</button>
+        <div class="tooltip_right_btns">
+          <button id="skipTutorialBtn" type="button" class="btn_text">건너뛰기</button>
+          <button id="nextStepBtn" type="button" class="btn_primary">다음</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
