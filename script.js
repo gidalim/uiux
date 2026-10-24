@@ -383,6 +383,10 @@ function completeOnboarding() {
   onboardingIntro.hidden = true;
   tutorialOverlay.hidden = true;
   document.body.classList.remove("scroll-lock");
+  
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"})
 }
 
 function checkOnboardingStatus() {
