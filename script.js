@@ -2,6 +2,7 @@ console.log("JavaScript 연결확인");
 
 const SERVICENAME = "Calendar Service";
 
+// DOM 선택자 모음
 const tagForm = document.querySelector("#tag_form");
 const tagNameInput = document.querySelector("#tag_name");
 const tagSubmitButton = document.querySelector("#tagSubmitButton");
@@ -14,12 +15,14 @@ const prevMonthButton = document.querySelector("#prevMonthButton");
 const nextMonthButton = document.querySelector("#nextMonthButton");
 const tabMonth = document.querySelector("#tabMonth");
 const tabWeek = document.querySelector("#tabWeek");
-const tagDropDown = document.querySelector("#tagDropdown");
+const tagDropdown = document.querySelector("#tagDropdown");
 const accessCheckbox = document.querySelector("#accessCheckbox");
 const accessButton = document.querySelector("#accessButton");
 const devAccessForm = document.querySelector("#devAccessForm");
 const devLoading = document.querySelector("#devLoading");
 const githubLinkCard = document.querySelector("#githubLinkCard");
+
+// 온보딩 및 튜토리얼 DOM 요소
 const onboardingIntro = document.querySelector("#onboardingIntro");
 const startTutorialBtn = document.querySelector("#startTutorialBtn");
 const skipIntroBtn = document.querySelector("#skipIntroBtn");
@@ -33,6 +36,8 @@ const tutorialDesc = document.querySelector("#tutorialDesc");
 const prevStepBtn = document.querySelector("#prevStepBtn");
 const nextStepBtn = document.querySelector("#nextStepBtn");
 const skipTutorialBtn = document.querySelector("#skipTutorialBtn");
+
+// 일정 모달 DOM 요소
 const scheduleModal = document.querySelector("#scheduleModal");
 const modalDateTitle = document.querySelector("#modalDateTitle");
 const scheduleForm = document.querySelector("#scheduleForm");
@@ -46,9 +51,9 @@ const existingScheduleList = document.querySelector("#existingScheduleList");
 
 
 let Tags = {
-    "외부 일정": "pink", 
-    "과제": "green", 
-    "강의": "blue", 
+  "외부 일정": "pink",
+  "과제": "green",
+  "강의": "blue"
 };
 
 let Schedules = {
@@ -59,264 +64,203 @@ let Schedules = {
 
 let selectedDateKey = null;
 let viewDate = new Date();
-let currentViewMode = window.innerWidth <= 768 ? "week" : "month"; 
+let currentViewMode = window.innerWidth <= 768 ? "week" : "month";
+let isSubmitTag = false;
 
-let isSubmitTag = false
+// 지원 태그 컬러 키 목록
+const TAG_COLOR_KEYS = ["gray", "brown", "orange", "yellow", "green", "blue", "purple", "pink", "red"];
 
-const COLOR_LIST = {
-  gray:   { name: "회색",   bg: "#E3E2E0", text: "#201F1D", darkBg: "#2F2F2F", darkText: "#9B9A97" },
-  brown:  { name: "갈색",   bg: "#EBDAD4", text: "#4E3227", darkBg: "#432E27", darkText: "#BA856F" },
-  orange: { name: "주황색", bg: "#F8D8C8", text: "#7D421B", darkBg: "#492F24", darkText: "#C77D48" },
-  yellow: { name: "노란색", bg: "#F7E5A9", text: "#6B4A18", darkBg: "#40361F", darkText: "#CA984D" },
-  green:  { name: "초록색", bg: "#D4E8D4", text: "#1E4630", darkBg: "#27382B", darkText: "#529E72" },
-  blue:   { name: "파란색", bg: "#CCE5F3", text: "#1C3658", darkBg: "#1F3849", darkText: "#5E87C9" },
-  purple: { name: "보라색", bg: "#E7DAF2", text: "#4C2668", darkBg: "#3B2D4A", darkText: "#9D68D3" },
-  pink:   { name: "분홍색", bg: "#F5D5E6", text: "#68264C", darkBg: "#4E2C3F", darkText: "#C15C93" },
-  red:    { name: "빨간색", bg: "#FBCFD1", text: "#752522", darkBg: "#522E2A", darkText: "#EB5757" }
-};
-
-
-function getRandomColor(){
-    const keys = Object.keys(COLOR_LIST);
-    return keys[Math.floor(Math.random() * keys.length)];
+function getRandomColor() {
+  return TAG_COLOR_KEYS[Math.floor(Math.random() * TAG_COLOR_KEYS.length)];
 }
 
-function makeTagsMessage(tagName, createdTag){
-    if(createdTag == true){ 
-        return `${tagName} 태그 생성 완료!`;
-    }
-    else if(createdTag == false){
-        return `${tagName} 태그가 이미 존재합니다!`;
-    }
+function makeTagsMessage(tagName, createdTag) {
+  return createdTag ? `${tagName} 태그 생성 완료!` : `${tagName} 태그가 이미 존재합니다!`;
 }
 
-function addCreateDOM(name, color){
-    const newTags = document.createElement("li");
-    newTags.textContent = name;
-    newTags.classList.add(`tag-${color}`);
-    tagList.appendChild(newTags);
-
-    console.log("태그가 생성되었어요!", Tags);
+function addCreateDOM(name, color) {
+  const newTags = document.createElement("li");
+  newTags.textContent = name;
+  newTags.classList.add(`tag-${color}`);
+  tagList.appendChild(newTags);
 }
 
-function renderInitialTags(){
-    for(const [tagName, tagColor] of Object.entries(Tags)){
-        addCreateDOM(tagName, tagColor);
-    }
-
-    console.log("초기 태그 렌더링 완료!");
+function renderInitialTags() {
+  for (const [tagName, tagColor] of Object.entries(Tags)) {
+    addCreateDOM(tagName, tagColor);
+  }
 }
-
 
 function lockSubmitButton() {
-    isSubmitTag = true;
-    tagSubmitButton.disabled = true;
-    tagSubmitButton.classList.add("is-success", "disabled");
+  isSubmitTag = true;
+  tagSubmitButton.disabled = true;
+  tagSubmitButton.classList.add("is-success", "disabled");
 
-    setTimeout(() => {
-        isSubmitTag = false;
-        tagSubmitButton.disabled = false;
-        tagSubmitButton.classList.remove("is-success", "disabled");
-        tagNameInput.focus();
-    }, 500);
+  setTimeout(() => {
+    isSubmitTag = false;
+    tagSubmitButton.disabled = false;
+    tagSubmitButton.classList.remove("is-success", "disabled");
+    tagNameInput.focus();
+  }, 500);
 }
 
-function handleTagSubmit(event){
-    event.preventDefault();
+function handleTagSubmit(event) {
+  event.preventDefault();
+  if (isSubmitTag) return;
 
-    if (isSubmitTag) return;
+  const tagName = tagNameInput.value.trim();
 
-    const tagName = tagNameInput.value.trim();  
+  if (tagName === "") {
+    tagMessage.textContent = "태그 입력란이 비어있어요!";
+    return;
+  }
 
-    if(tagName === ""){
-        tagMessage.textContent = 
-        "태그 입력란이 비어있어요!";
-        return;
-    }
+  if (tagName in Tags) {
+    tagMessage.textContent = makeTagsMessage(tagName, false);
+  } else {
+    const randomColor = getRandomColor();
+    Tags[tagName] = randomColor;
+    tagMessage.textContent = makeTagsMessage(tagName, true);
+    addCreateDOM(tagName, randomColor);
+    lockSubmitButton();
+  }
 
-    if (tagName in Tags) {
-        tagMessage.textContent = makeTagsMessage(tagName, false);
-
-        } else {
-            const randomColor = getRandomColor();
-            Tags[tagName] = randomColor;
-
-            tagMessage.textContent = makeTagsMessage(tagName, true);
-            
-            addCreateDOM(tagName, randomColor);
-            lockSubmitButton(); 
-        }
-        
-        tagNameInput.value = "";
-        tagNameInput.focus();
-
+  tagNameInput.value = "";
+  tagNameInput.focus();
 }
-
 
 function getWeekNumber(date) {
-    const currentDate = date.getDate();
-    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-    
-    return Math.ceil((currentDate + firstDay) / 7);
-
+  const currentDate = date.getDate();
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  return Math.ceil((currentDate + firstDay) / 7);
 }
 
-function renderCalendar(){
-    const currentYear = viewDate.getFullYear();
-    const currentMonth = viewDate.getMonth();
-    const today = new Date();
-
-    calendarList.innerHTML = "";
-    
-
-    // 월간모드
-    if(currentViewMode === "month"){
-
-        calendarList.classList.remove("week-mode");
-        calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월`;
-    
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
-        const prevLastDate = new Date(currentYear, currentMonth, 0).getDate();
-    
-
-        for (let i = firstDay - 1; i >= 0; i--) {
-            const li =document.createElement("li");
-            li.className = "calendar_box prev-month";
-            li.textContent = prevLastDate - i;
-            calendarList.appendChild(li);
-        }
-
-        for (let date = 1; date <= lastDate; date++) {
-            const li = document.createElement("li");
-            li.className = "calendar_box";
-
-            // 날짜 키 생성 (예: "2026-10-15")
-            const dateKey = formatDateKey(currentYear, currentMonth, date);
-
-            // 날짜 숫자 요소
-            const numSpan = document.createElement("span");
-            numSpan.className = "date_num";
-            numSpan.textContent = date;
-            li.appendChild(numSpan);
-
-            // 오늘 날짜 하이라이트
-            if(
-                currentYear === today.getFullYear() &&
-                currentMonth === today.getMonth() &&
-                date === today.getDate()
-            ) {
-                li.classList.add("is-today");
-            }
-
-            const badgeUl = document.createElement("ul");
-            badgeUl.className = "schedule_badge_list";
-
-            if (Schedules[dateKey]) {
-                Schedules[dateKey].forEach(item => {
-                    const badgeLi = document.createElement("li");
-                    badgeLi.className = `schedule_badge tag-${item.color}`;
-                    badgeLi.textContent = item.text;
-                    badgeUl.appendChild(badgeLi);
-                });
-            }
-            li.appendChild(badgeUl);
-
-            li.addEventListener("click", () => {
-                const displayStr = `${currentYear}년 ${currentMonth + 1}월 ${date}일`;
-                openScheduleModal(dateKey, displayStr);
-            });
-
-            calendarList.appendChild(li);
-        }
-    } else {
-    
-    // 주간모드
-        calendarList.classList.add("week-mode");
-
-        const weekNum = getWeekNumber(viewDate);
-        calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월 ${weekNum}주차`;
-
-        const currentDay = viewDate.getDay();
-        const startOfWeek = new Date(viewDate);
-        startOfWeek.setDate(viewDate.getDate() - currentDay);
-
-        for (let i = 0; i < 7; i++) {
-            const dayDate = new Date(startOfWeek);
-            dayDate.setDate(startOfWeek.getDate() + i);
-
-            const li = document.createElement("li");
-            li.className = "calendar_box";
-
-            const dateKey = formatDateKey(
-                dayDate.getFullYear(),
-                dayDate.getMonth(),
-                dayDate.getDate()
-            );
-
-            const numSpan = document.createElement("span");
-            numSpan.className = "date_num";
-            numSpan.textContent = dayDate.getDate();
-            li.appendChild(numSpan);
-
-            if (dayDate.getMonth() !== currentMonth) {
-                li.classList.add("other-month");
-            }
-
-            if (
-                dayDate.getFullYear() === today.getFullYear() &&
-                dayDate.getMonth() === today.getMonth() &&
-                dayDate.getDate() === today.getDate()
-            ) {
-                li.classList.add("is-today");
-            }
-
-            const badgeUl = document.createElement("ul");
-            badgeUl.className = "schedule_badge_list";
-
-            if (Schedules[dateKey]) {
-                Schedules[dateKey].forEach(item => {
-                    const badgeLi = document.createElement("li");
-                    badgeLi.className = `schedule_badge tag-${item.color}`;
-                    badgeLi.textContent = item.text;
-                    badgeUl.appendChild(badgeLi);
-                });
-            }
-            li.appendChild(badgeUl);
-
-            li.addEventListener("click", () => {
-                const displayStr = `${dayDate.getFullYear()}년 ${dayDate.getMonth() + 1}월 ${dayDate.getDate()}일`;
-                openScheduleModal(dateKey, displayStr);
-            });
-
-            calendarList.appendChild(li);
-        }
-    } 
+function formatDateKey(year, month, date) {
+  const m = String(month + 1).padStart(2, "0");
+  const d = String(date).padStart(2, "0");
+  return `${year}-${m}-${d}`;
 }
 
-function switchCalendarView(mode){
-    currentViewMode = mode;
+// 캘린더 날짜 셀 공통 생성 헬퍼 함수
+function createCalendarCell(year, month, date, isOtherMonth = false) {
+  const li = document.createElement("li");
+  li.className = "calendar_box";
+  if (isOtherMonth) li.classList.add("other-month");
 
-    if (mode === "month"){
-        tabMonth.setAttribute("aria-selected", "true");
-        tabMonth.setAttribute("tabindex", "0");
-        tabWeek.setAttribute("aria-selected", "false");
-        tabWeek.setAttribute("tabindex", "-1");
-      } else {
-        tabWeek.setAttribute("aria-selected", "true");
-        tabWeek.setAttribute("tabindex", "0");
-        tabMonth.setAttribute("aria-selected", "false");
-        tabMonth.setAttribute("tabindex", "-1");
+  const today = new Date();
+  const dateKey = formatDateKey(year, month, date);
+
+  const numSpan = document.createElement("span");
+  numSpan.className = "date_num";
+  numSpan.textContent = date;
+  li.appendChild(numSpan);
+
+  if (
+    year === today.getFullYear() &&
+    month === today.getMonth() &&
+    date === today.getDate()
+  ) {
+    li.classList.add("is-today");
+  }
+
+  // 일정 뱃지 목록
+  const badgeUl = document.createElement("ul");
+  badgeUl.className = "schedule_badge_list";
+
+  if (Schedules[dateKey]) {
+    Schedules[dateKey].forEach(item => {
+      const badgeLi = document.createElement("li");
+      badgeLi.className = `schedule_badge tag-${item.color}`;
+      badgeLi.textContent = item.text;
+      badgeUl.appendChild(badgeLi);
+    });
+  }
+  li.appendChild(badgeUl);
+
+  // 날짜 클릭 시 일정 모달 오픈
+  li.addEventListener("click", () => {
+    const displayStr = `${year}년 ${month + 1}월 ${date}일`;
+    openScheduleModal(dateKey, displayStr);
+  });
+
+  return li;
+}
+
+function renderCalendar() {
+  const currentYear = viewDate.getFullYear();
+  const currentMonth = viewDate.getMonth();
+
+  calendarList.innerHTML = "";
+
+  if (currentViewMode === "month") {
+    calendarList.classList.remove("week-mode");
+    calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월`;
+
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const prevLastDate = new Date(currentYear, currentMonth, 0).getDate();
+
+    // 이전 달 잔여 일자
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const li = document.createElement("li");
+      li.className = "calendar_box prev-month";
+      li.textContent = prevLastDate - i;
+      calendarList.appendChild(li);
     }
 
-    renderCalendar();
+    // 이번 달 일자
+    for (let date = 1; date <= lastDate; date++) {
+      calendarList.appendChild(createCalendarCell(currentYear, currentMonth, date));
+    }
+
+    // 다음 달 잔여 일자 (총 35 또는 42칸 유지)
+    const totalCells = calendarList.children.length;
+    const targetTotal = totalCells <= 35 ? 35 : 42;
+    for (let date = 1; date <= targetTotal - totalCells; date++) {
+      const li = document.createElement("li");
+      li.className = "calendar_box other-month";
+      li.textContent = date;
+      calendarList.appendChild(li);
+    }
+  } else {
+    // 주간 모드
+    calendarList.classList.add("week-mode");
+    const weekNum = getWeekNumber(viewDate);
+    calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월 ${weekNum}주차`;
+
+    const currentDay = viewDate.getDay();
+    const startOfWeek = new Date(viewDate);
+    startOfWeek.setDate(viewDate.getDate() - currentDay);
+
+    for (let i = 0; i < 7; i++) {
+      const dayDate = new Date(startOfWeek);
+      dayDate.setDate(startOfWeek.getDate() + i);
+
+      const isOther = dayDate.getMonth() !== currentMonth;
+      calendarList.appendChild(
+        createCalendarCell(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), isOther)
+      );
+    }
+  }
+}
+
+function switchCalendarView(mode) {
+  currentViewMode = mode;
+  const isMonth = mode === "month";
+
+  tabMonth.setAttribute("aria-selected", isMonth ? "true" : "false");
+  tabMonth.setAttribute("tabindex", isMonth ? "0" : "-1");
+  tabWeek.setAttribute("aria-selected", isMonth ? "false" : "true");
+  tabWeek.setAttribute("tabindex", isMonth ? "-1" : "0");
+
+  renderCalendar();
 }
 
 function renderTagDropdown(filterKeyword = "") {
   tagDropdown.innerHTML = "";
   const keyword = filterKeyword.toLowerCase().trim();
 
-  const matchedTags = Object.entries(Tags).filter(([tagName]) => 
+  const matchedTags = Object.entries(Tags).filter(([tagName]) =>
     tagName.toLowerCase().includes(keyword)
   );
 
@@ -330,10 +274,10 @@ function renderTagDropdown(filterKeyword = "") {
     matchedTags.forEach(([tagName, colorKey]) => {
       const li = document.createElement("li");
       li.textContent = tagName;
-      li.classList.add(`tag-${colorKey}`); 
+      li.classList.add(`tag-${colorKey}`);
 
       li.addEventListener("mousedown", (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         tagNameInput.value = tagName;
         tagDropdown.hidden = true;
         tagNameInput.focus();
@@ -345,71 +289,6 @@ function renderTagDropdown(filterKeyword = "") {
 
   tagDropdown.hidden = false;
 }
-
-
-tabMonth.addEventListener("click", () => switchCalendarView("month"));
-tabWeek.addEventListener("click", () => switchCalendarView("week"));
-
-
-prevMonthButton.addEventListener("click", () => {
-if (currentViewMode === "month") {
-      viewDate.setMonth(viewDate.getMonth() - 1);
-    } else {
-      viewDate.setDate(viewDate.getDate() - 7); // 1주일 전으로 이동
-    }
-    renderCalendar();
-});
-
-nextMonthButton.addEventListener("click", () => {
-if (currentViewMode === "month") {
-      viewDate.setMonth(viewDate.getMonth() + 1);
-    } else {
-      viewDate.setDate(viewDate.getDate() + 7); // 1주일 뒤로 이동
-    }
-    renderCalendar();
-});
-
-themeButton.addEventListener("click", () => {
-    document.body.classList.toggle("night-mode");
-    const isNightMode = document.body.classList.contains("night-mode");
-    themeButton.textContent = isNightMode ? "🌙" : "☀️";
-});
-
-tagForm.addEventListener("submit", handleTagSubmit);
-
-tagNameInput.addEventListener("focus", () => {
-  renderTagDropdown(tagNameInput.value);
-});
-
-tagNameInput.addEventListener("input", (event) => {
-  renderTagDropdown(event.target.value);
-});
-
-document.addEventListener("click", (event) => {
-  if (!event.target.closest(".tag_input_wrapper")) {
-    tagDropdown.hidden = true;
-  }
-});
-
-accessCheckbox.addEventListener("change", (event) => {
-  accessButton.disabled = !event.target.checked;
-});
-
-devAccessForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  if (!accessCheckbox.checked) return;
-
-  // 폼 숨기고 로딩 스피너 표시
-  devAccessForm.hidden = true;
-  devLoading.hidden = false;
-
-  // 1.2초 뒤 링크 카드 출력
-  setTimeout(() => {
-    devLoading.hidden = true;
-    githubLinkCard.hidden = false;
-  }, 1200);
-});
 
 const TUTORIAL_STEPS = [
   {
@@ -450,7 +329,8 @@ function completeOnboarding() {
 
   window.scrollTo({
     top: 0,
-    behavior: "smooth"})
+    behavior: "smooth"
+  });
 }
 
 function checkOnboardingStatus() {
@@ -511,7 +391,7 @@ function renderTutorialStep(stepIndex) {
 
   function handleScroll() {
     clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(onScrollFinished, 60); 
+    scrollTimeout = setTimeout(onScrollFinished, 60);
   }
 
   if (Math.abs(window.scrollY - targetScrollTop) < 5) {
@@ -527,12 +407,6 @@ function renderTutorialStep(stepIndex) {
   }
 }
 
-restartTutorialBtn.addEventListener("click", () => {
-  sessionStorage.removeItem("calendar_service_visited");
-  window.scrollTo({ top: 0, behavior: "instant" });
-  openTutorial();
-});
-
 function goToNextStep() {
   if (currentTutorialStep < TUTORIAL_STEPS.length - 1) {
     currentTutorialStep++;
@@ -547,39 +421,6 @@ function goToPrevStep() {
     currentTutorialStep--;
     renderTutorialStep(currentTutorialStep);
   }
-}
-
-startTutorialBtn.addEventListener("click", () => {
-  onboardingIntro.hidden = true;
-  tutorialOverlay.hidden = false;
-  currentTutorialStep = 0;
-  renderTutorialStep(0);
-});
-
-startTutorialBtn.addEventListener("click", openTutorial);
-skipIntroBtn.addEventListener("click", completeOnboarding);
-nextStepBtn.addEventListener("click", goToNextStep);
-prevStepBtn.addEventListener("click", goToPrevStep);
-skipTutorialBtn.addEventListener("click", completeOnboarding);
-closeTutorialBtn.addEventListener("click", completeOnboarding);
-
-spotlightBox.addEventListener("click", goToNextStep);
-
-restartTutorialBtn.addEventListener("click", () => {
-  sessionStorage.removeItem("calendar_service_visited");
-  openTutorial();
-});
-
-window.addEventListener("resize", () => {
-    if (!tutorialOverlay.hidden) {
-      renderTutorialStep(currentTutorialStep);
-    }
-});
-
-function formatDateKey(year, month, date) {
-  const m = String(month + 1).padStart(2, "0");
-  const d = String(date).padStart(2, "0");
-  return `${year}-${m}-${d}`;
 }
 
 function openScheduleModal(dateKey, displayDateStr) {
@@ -640,9 +481,82 @@ function renderExistingSchedules(dateKey) {
   });
 }
 
+tabMonth.addEventListener("click", () => switchCalendarView("month"));
+tabWeek.addEventListener("click", () => switchCalendarView("week"));
+
+prevMonthButton.addEventListener("click", () => {
+  if (currentViewMode === "month") {
+    viewDate.setMonth(viewDate.getMonth() - 1);
+  } else {
+    viewDate.setDate(viewDate.getDate() - 7);
+  }
+  renderCalendar();
+});
+
+nextMonthButton.addEventListener("click", () => {
+  if (currentViewMode === "month") {
+    viewDate.setMonth(viewDate.getMonth() + 1);
+  } else {
+    viewDate.setDate(viewDate.getDate() + 7);
+  }
+  renderCalendar();
+});
+
+themeButton.addEventListener("click", () => {
+  document.body.classList.toggle("night-mode");
+  const isNightMode = document.body.classList.contains("night-mode");
+  themeButton.textContent = isNightMode ? "🌙" : "☀️";
+});
+
+tagForm.addEventListener("submit", handleTagSubmit);
+tagNameInput.addEventListener("focus", () => renderTagDropdown(tagNameInput.value));
+tagNameInput.addEventListener("input", (e) => renderTagDropdown(e.target.value));
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".tag_input_wrapper")) {
+    tagDropdown.hidden = true;
+  }
+});
+
+accessCheckbox.addEventListener("change", (e) => {
+  accessButton.disabled = !e.target.checked;
+});
+
+devAccessForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!accessCheckbox.checked) return;
+
+  devAccessForm.hidden = true;
+  devLoading.hidden = false;
+
+  setTimeout(() => {
+    devLoading.hidden = true;
+    githubLinkCard.hidden = false;
+  }, 1200);
+});
+
+startTutorialBtn.addEventListener("click", openTutorial);
+skipIntroBtn.addEventListener("click", completeOnboarding);
+nextStepBtn.addEventListener("click", goToNextStep);
+prevStepBtn.addEventListener("click", goToPrevStep);
+skipTutorialBtn.addEventListener("click", completeOnboarding);
+closeTutorialBtn.addEventListener("click", completeOnboarding);
+spotlightBox.addEventListener("click", goToNextStep);
+
+restartTutorialBtn.addEventListener("click", () => {
+  sessionStorage.removeItem("calendar_service_visited");
+  window.scrollTo({ top: 0, behavior: "instant" });
+  openTutorial();
+});
+
+window.addEventListener("resize", () => {
+  if (!tutorialOverlay.hidden) {
+    renderTutorialStep(currentTutorialStep);
+  }
+});
+
 scheduleForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
   const text = scheduleText.value.trim();
 
   if (text === "") {
@@ -666,7 +580,7 @@ scheduleForm.addEventListener("submit", (e) => {
     color: tagColor
   });
 
-  renderCalendar(); 
+  renderCalendar();
   closeScheduleModal();
 });
 
@@ -675,8 +589,6 @@ cancelScheduleBtn.addEventListener("click", closeScheduleModal);
 scheduleModal.addEventListener("click", (e) => {
   if (e.target === scheduleModal) closeScheduleModal();
 });
-
-
 
 switchCalendarView(currentViewMode);
 renderInitialTags();
