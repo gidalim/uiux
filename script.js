@@ -33,6 +33,16 @@ const tutorialDesc = document.querySelector("#tutorialDesc");
 const prevStepBtn = document.querySelector("#prevStepBtn");
 const nextStepBtn = document.querySelector("#nextStepBtn");
 const skipTutorialBtn = document.querySelector("#skipTutorialBtn");
+const scheduleModal = document.querySelector("#scheduleModal");
+const modalDateTitle = document.querySelector("#modalDateTitle");
+const scheduleForm = document.querySelector("#scheduleForm");
+const scheduleText = document.querySelector("#scheduleText");
+const scheduleTagSelect = document.querySelector("#scheduleTagSelect");
+const scheduleErrorMsg = document.querySelector("#scheduleErrorMsg");
+const closeScheduleModalBtn = document.querySelector("#closeScheduleModalBtn");
+const cancelScheduleBtn = document.querySelector("#cancelScheduleBtn");
+const existingScheduleArea = document.querySelector("#existingScheduleArea");
+const existingScheduleList = document.querySelector("#existingScheduleList");
 
 
 let Tags = {
@@ -41,6 +51,13 @@ let Tags = {
     "강의": "blue", 
 };
 
+let Schedules = {
+  "2026-10-24": [
+    { id: 1, text: "UI/UX 중간 과제 제출", tag: "과제", color: "green" }
+  ]
+};
+
+let selectedDateKey = null;
 let viewDate = new Date();
 let currentViewMode = window.innerWidth <= 768 ? "week" : "month"; 
 
@@ -173,8 +190,17 @@ function renderCalendar(){
         for (let date = 1; date <= lastDate; date++) {
             const li = document.createElement("li");
             li.className = "calendar_box";
-            li.textContent = date;
 
+            // 날짜 키 생성 (예: "2026-10-15")
+            const dateKey = formatDateKey(currentYear, currentMonth, date);
+
+            // 날짜 숫자 요소
+            const numSpan = document.createElement("span");
+            numSpan.className = "date_num";
+            numSpan.textContent = date;
+            li.appendChild(numSpan);
+
+            // 오늘 날짜 하이라이트
             if(
                 currentYear === today.getFullYear() &&
                 currentMonth === today.getMonth() &&
@@ -182,15 +208,25 @@ function renderCalendar(){
             ) {
                 li.classList.add("is-today");
             }
-            calendarList.appendChild(li);
-        }
 
-        const totalCells = calendarList.children.length;
-        const targetTotal = totalCells <= 35 ? 35 : 42;
-        for (let date = 1; date <= targetTotal - totalCells; date++) {
-            const li = document.createElement("li");
-            li.className = "calendar_box other-month";
-            li.textContent = date;
+            const badgeUl = document.createElement("ul");
+            badgeUl.className = "schedule_badge_list";
+
+            if (Schedules[dateKey]) {
+                Schedules[dateKey].forEach(item => {
+                    const badgeLi = document.createElement("li");
+                    badgeLi.className = `schedule_badge tag-${item.color}`;
+                    badgeLi.textContent = item.text;
+                    badgeUl.appendChild(badgeLi);
+                });
+            }
+            li.appendChild(badgeUl);
+
+            li.addEventListener("click", () => {
+                const displayStr = `${currentYear}년 ${currentMonth + 1}월 ${date}일`;
+                openScheduleModal(dateKey, displayStr);
+            });
+
             calendarList.appendChild(li);
         }
     } else {
@@ -511,6 +547,107 @@ window.addEventListener("resize", () => {
       renderTutorialStep(currentTutorialStep);
     }
 });
+
+function formatDateKey(year, month, date) {
+  const m = String(month + 1).padStart(2, "0");
+  const d = String(date).padStart(2, "0");
+  return `${year}-${m}-${d}`;
+}
+
+function openScheduleModal(dateKey, displayDateStr) {
+  selectedDateKey = dateKey;
+  modalDateTitle.textContent = `${displayDateStr} 일정 관리`;
+  scheduleText.value = "";
+  scheduleErrorMsg.hidden = true;
+
+  scheduleTagSelect.innerHTML = "";
+  Object.keys(Tags).forEach(tagName => {
+    const opt = document.createElement("option");
+    opt.value = tagName;
+    opt.textContent = tagName;
+    scheduleTagSelect.appendChild(opt);
+  });
+
+  renderExistingSchedules(dateKey);
+  scheduleModal.hidden = false;
+  scheduleText.focus();
+}
+
+function closeScheduleModal() {
+  scheduleModal.hidden = true;
+  selectedDateKey = null;
+  scheduleErrorMsg.hidden = true;
+}
+
+function renderExistingSchedules(dateKey) {
+  const list = Schedules[dateKey] || [];
+  existingScheduleList.innerHTML = "";
+
+  if (list.length === 0) {
+    existingScheduleArea.hidden = true;
+    return;
+  }
+
+  existingScheduleArea.hidden = false;
+  list.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.className = `existing_schedule_item tag-${item.color}`;
+    li.innerHTML = `
+      <span>[${item.tag}] ${item.text}</span>
+      <span class="delete_hint">삭제 ✕</span>
+    `;
+
+    li.addEventListener("click", () => {
+      if (confirm(`'${item.text}' 일정을 삭제하시겠어요?`)) {
+        Schedules[dateKey].splice(index, 1);
+        if (Schedules[dateKey].length === 0) {
+          delete Schedules[dateKey];
+        }
+        renderCalendar();
+        renderExistingSchedules(dateKey);
+      }
+    });
+
+    existingScheduleList.appendChild(li);
+  });
+}
+
+scheduleForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const text = scheduleText.value.trim();
+
+  if (text === "") {
+    scheduleErrorMsg.textContent = "일정 내용을 입력해주세요!";
+    scheduleErrorMsg.hidden = false;
+    scheduleText.focus();
+    return;
+  }
+
+  const selectedTag = scheduleTagSelect.value;
+  const tagColor = Tags[selectedTag] || "purple";
+
+  if (!Schedules[selectedDateKey]) {
+    Schedules[selectedDateKey] = [];
+  }
+
+  Schedules[selectedDateKey].push({
+    id: Date.now(),
+    text: text,
+    tag: selectedTag,
+    color: tagColor
+  });
+
+  renderCalendar(); 
+  closeScheduleModal();
+});
+
+closeScheduleModalBtn.addEventListener("click", closeScheduleModal);
+cancelScheduleBtn.addEventListener("click", closeScheduleModal);
+scheduleModal.addEventListener("click", (e) => {
+  if (e.target === scheduleModal) closeScheduleModal();
+});
+
 
 
 switchCalendarView(currentViewMode);

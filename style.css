@@ -428,6 +428,181 @@ body.night-mode .tagList li {
 .tag-pink   { background-color: var(--tag-pink-bg);   color: var(--tag-pink-text); }
 .tag-red    { background-color: var(--tag-red-bg);    color: var(--tag-red-text); }
 
+
+/* 일정 모달 박스 */
+.calendar_box {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.calendar_box:hover:not(.other-month):not(.prev-month) {
+    border-color: var(--accent-purple);
+    transform: translateY(-2px);
+}
+
+/* 날짜 박스 상단 숫자 */
+.calendar_box .date_num {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+
+/* 날짜 박스 내부 일정 칩 컨테이너 */
+.calendar_box .schedule_badge_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+/* 개별 일정 칩 */
+.schedule_badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 6px;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+    display: block;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.modal_backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1050;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.modal_card {
+    background-color: var(--bg-page);
+    border: 1px solid var(--input-border);
+    border-radius: 16px;
+    max-width: 440px;
+    width: 100%;
+    padding: 24px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.modal_header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-main);
+}
+
+.form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.form_group label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.form_group .required {
+    color: #eb5757;
+}
+
+.form_group select {
+    padding: 10px 14px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    font-size: 14px;
+    outline: none;
+}
+
+.form_group select:focus {
+    outline: 2px solid var(--accent-purple);
+}
+
+.error_msg {
+    color: #eb5757;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal_actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* 등록된 일정 목록 영역 */
+.existing_schedule_area {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--input-border);
+}
+
+.existing_schedule_area h4 {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin: 0 0 10px 0;
+}
+
+.existing_schedule_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.existing_schedule_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.existing_schedule_item:hover {
+    opacity: 0.8;
+    transform: translateX(2px);
+}
+
+.existing_schedule_item .delete_hint {
+    font-size: 11px;
+    color: #eb5757;
+    margin-left: 8px;
+}
+
 /* 깃허브 링크 박스 */
 .developer_box {
     background-color: var(--bg-card);
@@ -522,9 +697,7 @@ body.night-mode .tagList li {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ==========================================================================
-   7주차 온보딩 & 스포트라이트 튜토리얼 레이어 스타일
-   ========================================================================== */
+
 .onboarding_backdrop {
     position: fixed;
     inset: 0;
@@ -847,4 +1020,12 @@ body.scroll-lock {
     font-size: 18px;
     padding: 4px;
   }
+
+  .modal_card {
+        padding: 20px 16px;
+    }
+    .modal_actions button {
+        min-height: 44px;
+        flex: 1;
+    }
 }

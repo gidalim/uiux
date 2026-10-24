@@ -31,7 +31,36 @@
       <a href="#tag">태그 목록</a>
       <a href="#detail">개발자 페이지</a>
     </nav>
-  </header> 
+  </header>
+  <div id="scheduleModal" class="modal_backdrop" hidden>
+    <div class="modal_card" role="dialog" aria-labelledby="modalDateTitle" aria-modal="true">
+      <div class="modal_header">
+        <h3 id="modalDateTitle">일정 등록</h3>
+        <button id="closeScheduleModalBtn" type="button" class="btn_close" aria-label="모달 닫기">✕</button>
+      </div>
+      <form id="scheduleForm" autocomplete="off">
+        <div class="form_group">
+          <label for="scheduleText">일정 내용 <span class="required">*</span></label>
+          <input type="text" id="scheduleText" placeholder="UI/UX과제 제출하기">
+          <p id="scheduleErrorMsg" class="error_msg" hidden></p>
+        </div>
+
+        <div class="form_group">
+          <label for="scheduleTagSelect">연결할 태그</label>
+          <select id="scheduleTagSelect"></select>
+        </div>
+
+        <div class="modal_actions">
+          <button type="button" id="cancelScheduleBtn" class="btn_secondary">취소</button>
+          <button type="submit" id="saveScheduleBtn" class="btn_primary">일정 저장</button>
+        </div>
+      </form>
+      <div id="existingScheduleArea" class="existing_schedule_area" hidden>
+        <h4>등록된 일정 (클릭 시 삭제)</h4>
+        <ul id="existingScheduleList" class="existing_schedule_list"></ul>
+      </div>
+    </div>
+  </div>
     <main>
       <section id="about"> 
         <h2>서비스 소개</h2>
