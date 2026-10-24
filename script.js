@@ -20,6 +20,11 @@ const accessButton = document.querySelector("#accessButton");
 const devAccessForm = document.querySelector("#devAccessForm");
 const devLoading = document.querySelector("#devLoading");
 const githubLinkCard = document.querySelector("#githubLinkCard");
+const onboardingIntro = document.querySelector("#onboardingIntro");
+const startTutorialBtn = document.querySelector("#startTutorialBtn");
+const skipIntroBtn = document.querySelector("#skipIntroBtn");
+const restartTutorialBtn = document.querySelector("#restartTutorialBtn");
+
 
 let Tags = {
     "외부 일정": "pink", 
