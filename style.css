@@ -634,9 +634,11 @@ body.night-mode .tagList li {
     gap: 6px;
     max-height: 120px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .existing_schedule_item {
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
