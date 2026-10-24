@@ -351,17 +351,17 @@ const TUTORIAL_STEPS = [
   {
     targetSelector: "#calendar",
     title: "캘린더 뷰 모드 전환",
-    desc: "월간 뷰와 주간 뷰를 전환해 보세요. 모바일 접속 시 주간 뷰가 기본 적용됩니다.",
+    desc: "월간 뷰와 주간 뷰를 전환해 보세요. 모바일 접속 시 주간 뷰가 기본 적용돼요.",
     position: "bottom"
   },
   {
-    targetSelector: "#tag_form",
+    targetSelector: "#tag",
     title: "태그 자동완성 및 생성",
-    desc: "입력창을 클릭하면 기존 태그 목록이 펼쳐지며, 검색 및 새 태그 등록이 가능합니다.",
+    desc: "입력창을 클릭하면 기존 태그 목록이 펼쳐지며, 검색 및 새 태그 등록이 가능해요.",
     position: "bottom"
   },
   {
-    targetSelector: "#devAccessForm",
+    targetSelector: "#detail",
     title: "개발자 페이지 체크박스 연동",
     desc: "하단의 체크박스를 통해 깃허브 소스코드를 확인할 수 있어요.",
     position: "top"
@@ -370,6 +370,21 @@ const TUTORIAL_STEPS = [
 
 let currentTutorialStep = 0;
 
+function openTutorial() {
+  onboardingIntro.hidden = true;
+  tutorialOverlay.hidden = false;
+  document.body.classList.add("scroll-lock");
+  currentTutorialStep = 0;
+  renderTutorialStep(0);
+}
+
+function completeOnboarding() {
+  sessionStorage.setItem("calendar_service_visited", "true");
+  onboardingIntro.hidden = true;
+  tutorialOverlay.hidden = true;
+  document.body.classList.remove("scroll-lock");
+}
+
 function checkOnboardingStatus() {
   const hasVisited = sessionStorage.getItem("calendar_service_visited");
   if (!hasVisited) {
@@ -377,27 +392,27 @@ function checkOnboardingStatus() {
   }
 }
 
-function completeOnboarding() {
-  sessionStorage.setItem("calendar_service_visited", "true");
-  onboardingIntro.hidden = true;
-  tutorialOverlay.hidden = true;
-}
 
 function renderTutorialStep(stepIndex) {
   const step = TUTORIAL_STEPS[stepIndex];
   const targetEl = document.querySelector(step.targetSelector);
   if (!targetEl) return;
 
-  targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  const targetRect = targetEl.getBoundingClientRect();
+  const absoluteTargetTop = window.scrollY + targetRect.top;
+  const middleScroll = absoluteTargetTop - (window.innerHeight / 2) + (targetRect.height / 2);
+
+  window.scrollTo({
+    top: Math.max(0, middleScroll),
+    behavior: "smooth"
+  });
 
   setTimeout(() => {
     const rect = targetEl.getBoundingClientRect();
-    const scrollY = window.scrollY;
-    const scrollX = window.scrollX;
-    const padding = 8;
+    const padding = 10;
 
-    spotlightBox.style.top = `${rect.top + scrollY - padding}px`;
-    spotlightBox.style.left = `${rect.left + scrollX - padding}px`;
+    spotlightBox.style.top = `${rect.top - padding}px`;
+    spotlightBox.style.left = `${rect.left - padding}px`;
     spotlightBox.style.width = `${rect.width + padding * 2}px`;
     spotlightBox.style.height = `${rect.height + padding * 2}px`;
 
@@ -410,14 +425,16 @@ function renderTutorialStep(stepIndex) {
 
     if (window.innerWidth > 768) {
       if (step.position === "bottom") {
-        tutorialTooltip.style.top = `${rect.bottom + scrollY + 16}px`;
-        tutorialTooltip.style.left = `${rect.left + scrollX}px`;
+        const topPos = Math.min(window.innerHeight - 220, rect.bottom + 16);
+        tutorialTooltip.style.top = `${topPos}px`;
+        tutorialTooltip.style.left = `${Math.max(20, rect.left)}px`;
       } else {
-        tutorialTooltip.style.top = `${rect.top + scrollY - tutorialTooltip.offsetHeight - 16}px`;
-        tutorialTooltip.style.left = `${rect.left + scrollX}px`;
+        const topPos = Math.max(20, rect.top - 200);
+        tutorialTooltip.style.top = `${topPos}px`;
+        tutorialTooltip.style.left = `${Math.max(20, rect.left)}px`;
       }
     }
-  }, 250);
+  }, 320);
 }
 
 function goToNextStep() {
@@ -443,21 +460,18 @@ startTutorialBtn.addEventListener("click", () => {
   renderTutorialStep(0);
 });
 
+startTutorialBtn.addEventListener("click", openTutorial);
 skipIntroBtn.addEventListener("click", completeOnboarding);
 nextStepBtn.addEventListener("click", goToNextStep);
 prevStepBtn.addEventListener("click", goToPrevStep);
 skipTutorialBtn.addEventListener("click", completeOnboarding);
 closeTutorialBtn.addEventListener("click", completeOnboarding);
 
-spotlightBox.addEventListener("click", () => {
-  goToNextStep();
-});
+spotlightBox.addEventListener("click", goToNextStep);
 
 restartTutorialBtn.addEventListener("click", () => {
   sessionStorage.removeItem("calendar_service_visited");
-  currentTutorialStep = 0;
-  tutorialOverlay.hidden = false;
-  renderTutorialStep(0);
+  openTutorial();
 });
 
 window.addEventListener("resize", () => {

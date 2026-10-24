@@ -603,24 +603,28 @@ body.night-mode .tagList li {
 .spotlight_box {
     position: fixed;
     border-radius: 12px;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65);
-    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75); 
+    transition: top 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
     pointer-events: auto;
     cursor: pointer;
     border: 2px dashed var(--accent-purple);
 }
 
 .tutorial_tooltip {
-    position: absolute;
+    position: fixed; 
     width: 320px;
     background-color: var(--bg-page);
     border: 1px solid var(--input-border);
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
     pointer-events: auto;
     z-index: 1001;
-    transition: all 0.35s ease;
+    transition: top 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .tooltip_header {
@@ -690,6 +694,12 @@ body.night-mode .tagList li {
 
 [hidden] {
     display: none !important;
+}
+
+/* 튜토리얼 중 외부 화면 관리 */
+body.scroll-lock {
+    overflow: hidden !important;
+    touch-action: none !important;
 }
 
 /* 가로폭 768px 이하 모바일 반응형 */
