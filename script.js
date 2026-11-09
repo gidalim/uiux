@@ -151,6 +151,7 @@ function validateScheduleInput() {
   const currentLength = scheduleText.value.length;
   scheduleCharCount.textContent = `${currentLength} / 20자`;
 
+  // 1) 빈 값 검사 -> 버튼 즉시 잠금
   if (text === "") {
     scheduleFeedbackMsg.textContent = "일정 내용을 1자 이상 입력해 주세요.";
     scheduleFeedbackMsg.className = "feedback_msg is-error";
@@ -159,6 +160,7 @@ function validateScheduleInput() {
     return false;
   }
 
+  // 2) 중복 일정 검증 -> 버튼 즉시 잠금
   const currentList = Schedules[selectedDateKey] || [];
   const isDuplicate = currentList.some(item => item.text.toLowerCase() === text.toLowerCase());
 
@@ -166,10 +168,11 @@ function validateScheduleInput() {
     scheduleFeedbackMsg.textContent = "⚠️ 이미 같은 날짜에 동일한 일정이 존재해요!";
     scheduleFeedbackMsg.className = "feedback_msg is-error";
     scheduleFeedbackMsg.hidden = false;
-    saveScheduleBtn.disabled = true;
+    saveScheduleBtn.disabled = true; 
     return false;
   }
 
+  // 3) 정상 통과 -> 버튼 활성화
   scheduleFeedbackMsg.textContent = "등록 가능한 일정입니다.";
   scheduleFeedbackMsg.className = "feedback_msg is-success";
   scheduleFeedbackMsg.hidden = false;

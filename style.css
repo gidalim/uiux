@@ -827,6 +827,26 @@ body.night-mode .tagList li {
     background-color: var(--primary-btn-hover);
 }
 
+.modal_actions .btn_primary:hover:not(:disabled) {
+    background-color: var(--primary-btn-hover);
+}
+
+.modal_actions button:disabled,
+.modal_actions .btn_primary:disabled {
+    background-color: var(--input-border) !important; 
+    color: var(--text-sub) !important;
+    opacity: 0.55 !important;                          
+    cursor: not-allowed !important;                   
+    pointer-events: none;                              
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+#scheduleText:focus {
+    outline: 2px solid var(--accent-purple) !important;
+    outline-offset: 1px;
+}
+
 .existing_schedule_area {
     margin-top: 20px;
     padding-top: 16px;
