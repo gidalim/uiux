@@ -306,6 +306,104 @@ button:active{
     box-shadow: 0 0 8px rgba(154, 115, 181, 0.25);
 }
 
+.calendar_weekdays.is-hidden {
+    display: none !important;
+}
+
+/* 일간 모드 캘린더 리스트 (7열 그리드 해제 후 단일 컬럼) */
+.calendar_list.day-mode {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    gap: 16px;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.day_view_container {
+    width: 100% !important;
+    background-color: var(--bg-card);
+    border: 1px solid var(--input-border);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    list-style: none;
+}
+
+.day_view_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--input-border);
+    padding-bottom: 16px;
+}
+
+.day_view_header .day_info_title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.day_view_header .btn_add_day_schedule {
+    width: auto !important;
+    min-height: auto !important;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background-color: var(--primary-btn);
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+}
+
+/* 일간 뷰 일정 카드 목록 */
+.day_schedule_card_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.day_schedule_card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.day_schedule_card:hover {
+    filter: brightness(0.96);
+    transform: translateY(-1px);
+}
+
+.day_schedule_card .card_badge {
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.day_schedule_empty {
+    text-align: center;
+    padding: 36px 0;
+    color: var(--text-sub);
+    font-size: 14px;
+}
+
 *,
 *::before,
 *::after {

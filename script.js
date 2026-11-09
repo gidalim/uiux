@@ -21,6 +21,8 @@ const accessButton = document.querySelector("#accessButton");
 const devAccessForm = document.querySelector("#devAccessForm");
 const devLoading = document.querySelector("#devLoading");
 const githubLinkCard = document.querySelector("#githubLinkCard");
+const tabDay = document.querySelector("#tabDay");
+const calendarWeekdays = document.querySelector(".calendar_weekdays");
 
 // 온보딩 및 튜토리얼 DOM 요소
 const onboardingIntro = document.querySelector("#onboardingIntro");
@@ -50,17 +52,14 @@ const existingScheduleArea = document.querySelector("#existingScheduleArea");
 const existingScheduleList = document.querySelector("#existingScheduleList");
 
 
+
 let Tags = {
   "외부 일정": "pink",
   "과제": "green",
   "강의": "blue"
 };
 
-let Schedules = {
-  "2026-10-25": [
-    { id: 1, text: "UI/UX 중간 과제 제출", tag: "과제", color: "green" }
-  ]
-};
+
 
 let selectedDateKey = null;
 let viewDate = new Date();
@@ -69,6 +68,25 @@ let isSubmitTag = false;
 
 // 지원 태그 컬러 키 목록
 const TAG_COLOR_KEYS = ["gray", "brown", "orange", "yellow", "green", "blue", "purple", "pink", "red"];
+
+function formatDateKey(year, month, date) {
+  const m = String(month + 1).padStart(2, "0");
+  const d = String(date).padStart(2, "0");
+  return `${year}-${m}-${d}`;
+}
+
+const _initToday = new Date();
+const todayDateKey = formatDateKey(_initToday.getFullYear(), _initToday.getMonth(), _initToday.getDate());
+
+let Schedules = {
+  [todayDateKey]: [
+    { id: 1, text: "오늘", tag: "과제", color: "green" }
+  ],
+  "2026-10-25": [
+    { id: 2, text: "UI/UX 중간 과제 제출", tag: "과제", color: "green" }
+  ]
+};
+
 
 function getRandomColor() {
   return TAG_COLOR_KEYS[Math.floor(Math.random() * TAG_COLOR_KEYS.length)];
@@ -135,12 +153,6 @@ function getWeekNumber(date) {
   return Math.ceil((currentDate + firstDay) / 7);
 }
 
-function formatDateKey(year, month, date) {
-  const m = String(month + 1).padStart(2, "0");
-  const d = String(date).padStart(2, "0");
-  return `${year}-${m}-${d}`;
-}
-
 // 캘린더 날짜 셀 공통 생성 헬퍼 함수
 function createCalendarCell(year, month, date, isOtherMonth = false) {
   const li = document.createElement("li");
@@ -192,15 +204,16 @@ function renderCalendar() {
 
   calendarList.innerHTML = "";
 
+  // 1) 월간 모드
   if (currentViewMode === "month") {
-    calendarList.classList.remove("week-mode");
+    calendarWeekdays.classList.remove("is-hidden");
+    calendarList.classList.remove("week-mode", "day-mode");
     calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월`;
 
     const firstDay = new Date(currentYear, currentMonth, 1).getDay();
     const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
     const prevLastDate = new Date(currentYear, currentMonth, 0).getDate();
 
-    // 이전 달 잔여 일자
     for (let i = firstDay - 1; i >= 0; i--) {
       const li = document.createElement("li");
       li.className = "calendar_box prev-month";
@@ -208,12 +221,10 @@ function renderCalendar() {
       calendarList.appendChild(li);
     }
 
-    // 이번 달 일자
     for (let date = 1; date <= lastDate; date++) {
       calendarList.appendChild(createCalendarCell(currentYear, currentMonth, date));
     }
 
-    // 다음 달 잔여 일자 (총 35 또는 42칸 유지)
     const totalCells = calendarList.children.length;
     const targetTotal = totalCells <= 35 ? 35 : 42;
     for (let date = 1; date <= targetTotal - totalCells; date++) {
@@ -222,9 +233,13 @@ function renderCalendar() {
       li.textContent = date;
       calendarList.appendChild(li);
     }
-  } else {
-    // 주간 모드
+
+  // 2) 주간 모드
+  } else if (currentViewMode === "week") {
+    calendarWeekdays.classList.remove("is-hidden");
+    calendarList.classList.remove("day-mode");
     calendarList.classList.add("week-mode");
+
     const weekNum = getWeekNumber(viewDate);
     calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월 ${weekNum}주차`;
 
@@ -241,17 +256,71 @@ function renderCalendar() {
         createCalendarCell(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), isOther)
       );
     }
+
+  // 3) 일간(Daily) 모드
+  } else {
+    calendarWeekdays.classList.add("is-hidden"); 
+    calendarList.classList.remove("week-mode");
+    calendarList.classList.add("day-mode");
+
+    const dayNames = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+    const dayStr = dayNames[viewDate.getDay()];
+    calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월 ${currentDate}일 (${dayStr})`;
+
+    const dateKey = formatDateKey(currentYear, currentMonth, currentDate);
+    const daySchedules = Schedules[dateKey] || [];
+    const displayDateStr = `${currentYear}년 ${currentMonth + 1}월 ${currentDate}일`;
+
+    const container = document.createElement("li");
+    container.className = "day_view_container";
+
+    container.innerHTML = `
+      <div class="day_view_header">
+        <h4 class="day_info_title">오늘의 집중 일정 (<span id="dayScheduleCount">${daySchedules.length}</span>건)</h4>
+        <button type="button" class="btn_add_day_schedule" id="btnDayAddSchedule">+ 새 일정 등록</button>
+      </div>
+      <ul class="day_schedule_card_list" id="dayScheduleCardList"></ul>
+    `;
+
+    const cardListEl = container.querySelector("#dayScheduleCardList");
+
+    if (daySchedules.length === 0) {
+      cardListEl.innerHTML = `<div class="day_schedule_empty">등록된 일정이 없습니다. 새 일정을 추가해 보세요!</div>`;
+    } else {
+      daySchedules.forEach(item => {
+        const cardLi = document.createElement("li");
+        cardLi.className = `day_schedule_card tag-${item.color}`;
+        cardLi.style.cursor = "pointer";
+        cardLi.innerHTML = `
+          <span><span class="card_badge">${item.tag}</span>${item.text}</span>
+          <span class="delete_hint" style="font-size:12px; color:var(--text-sub);">관리 / 삭제</span>
+        `;
+        // 카드 클릭 시 해당 날짜 일정 관리 모달 오픈
+        cardLi.addEventListener("click", () => {
+          openScheduleModal(dateKey, displayDateStr);
+        });
+        cardListEl.appendChild(cardLi);
+      });
+    }
+
+    // 일간 모드 상단 [+ 새 일정 등록] 버튼 클릭 시 모달 오픈
+    container.querySelector("#btnDayAddSchedule").addEventListener("click", () => {
+      openScheduleModal(dateKey, displayDateStr);
+    });
+
+    calendarList.appendChild(container);
   }
 }
 
 function switchCalendarView(mode) {
   currentViewMode = mode;
-  const isMonth = mode === "month";
 
-  tabMonth.setAttribute("aria-selected", isMonth ? "true" : "false");
-  tabMonth.setAttribute("tabindex", isMonth ? "0" : "-1");
-  tabWeek.setAttribute("aria-selected", isMonth ? "false" : "true");
-  tabWeek.setAttribute("tabindex", isMonth ? "-1" : "0");
+  tabMonth.setAttribute("aria-selected", mode === "month" ? "true" : "false");
+  tabMonth.setAttribute("tabindex", mode === "month" ? "0" : "-1");
+  tabWeek.setAttribute("aria-selected", mode === "week" ? "true" : "false");
+  tabWeek.setAttribute("tabindex", mode === "week" ? "-1" : "0");
+  tabDay.setAttribute("aria-selected", mode === "day" ? "true" : "false");
+  tabDay.setAttribute("tabindex", mode === "day" ? "-1" : "0");
 
   renderCalendar();
 }
@@ -487,8 +556,10 @@ tabWeek.addEventListener("click", () => switchCalendarView("week"));
 prevMonthButton.addEventListener("click", () => {
   if (currentViewMode === "month") {
     viewDate.setMonth(viewDate.getMonth() - 1);
-  } else {
+  } else if (currentViewMode === "week") {
     viewDate.setDate(viewDate.getDate() - 7);
+  } else {
+    viewDate.setDate(viewDate.getDate() - 1);
   }
   renderCalendar();
 });
@@ -496,11 +567,15 @@ prevMonthButton.addEventListener("click", () => {
 nextMonthButton.addEventListener("click", () => {
   if (currentViewMode === "month") {
     viewDate.setMonth(viewDate.getMonth() + 1);
-  } else {
+  } else if (currentViewMode === "week") {
     viewDate.setDate(viewDate.getDate() + 7);
+  } else {
+    viewDate.setDate(viewDate.getDate() + 1);
   }
   renderCalendar();
 });
+
+tabDay.addEventListener("click", () => switchCalendarView("day"));
 
 themeButton.addEventListener("click", () => {
   document.body.classList.toggle("night-mode");
