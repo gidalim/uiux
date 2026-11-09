@@ -45,13 +45,20 @@ const modalDateTitle = document.querySelector("#modalDateTitle");
 const scheduleForm = document.querySelector("#scheduleForm");
 const scheduleText = document.querySelector("#scheduleText");
 const scheduleTagSelect = document.querySelector("#scheduleTagSelect");
-const scheduleErrorMsg = document.querySelector("#scheduleErrorMsg");
 const closeScheduleModalBtn = document.querySelector("#closeScheduleModalBtn");
 const cancelScheduleBtn = document.querySelector("#cancelScheduleBtn");
 const existingScheduleArea = document.querySelector("#existingScheduleArea");
 const existingScheduleList = document.querySelector("#existingScheduleList");
+const scheduleCharCount = document.querySelector("#scheduleCharCount");
+const scheduleFeedbackMsg = document.querySelector("#scheduleFeedbackMsg");
+const isRangeCheckbox = document.querySelector("#isRangeCheckbox");
+const rangeDateArea = document.querySelector("#rangeDateArea");
+const scheduleEndDate = document.querySelector("#scheduleEndDate");
+const saveScheduleBtn = document.querySelector("#saveScheduleBtn");
+const modalContentCard = document.querySelector(".modal_card");
+const toastNotification = document.querySelector("#toastNotification");
 
-
+let toastTimer = null;
 
 let Tags = {
   "외부 일정": "pink",
@@ -59,14 +66,11 @@ let Tags = {
   "강의": "blue"
 };
 
-
-
 let selectedDateKey = null;
 let viewDate = new Date();
 let currentViewMode = window.innerWidth <= 768 ? "week" : "month";
 let isSubmitTag = false;
 
-// 지원 태그 컬러 키 목록
 const TAG_COLOR_KEYS = ["gray", "brown", "orange", "yellow", "green", "blue", "purple", "pink", "red"];
 
 function formatDateKey(year, month, date) {
@@ -88,7 +92,6 @@ let Schedules = {
   ]
 };
 
-
 function getRandomColor() {
   return TAG_COLOR_KEYS[Math.floor(Math.random() * TAG_COLOR_KEYS.length)];
 }
@@ -109,6 +112,245 @@ function renderInitialTags() {
     addCreateDOM(tagName, tagColor);
   }
 }
+
+// 토스트 메시지 출력
+function showToast(message, type = "success", duration = 2000) {
+  clearTimeout(toastTimer);
+  toastNotification.textContent = message;
+  toastNotification.className = `toast_notification toast-${type} is-show`;
+  toastNotification.hidden = false;
+
+  toastTimer = setTimeout(() => {
+    toastNotification.classList.remove("is-show");
+    setTimeout(() => {
+      toastNotification.hidden = true;
+    }, 300);
+  }, duration);
+}
+
+// 조건부 기간 체크박스 토글 (2일 강제 로직 제외, 순수 활성/비활성화)
+isRangeCheckbox.addEventListener("change", (e) => {
+  const isChecked = e.target.checked;
+  if (isChecked) {
+    rangeDateArea.hidden = false;
+    scheduleEndDate.disabled = false;
+    if (selectedDateKey) {
+      scheduleEndDate.min = selectedDateKey;
+      scheduleEndDate.value = selectedDateKey;
+    }
+  } else {
+    rangeDateArea.hidden = true;
+    scheduleEndDate.disabled = true;
+    scheduleEndDate.value = "";
+  }
+});
+
+// 실시간 글자 수 및 중복 검증
+function validateScheduleInput() {
+  const text = scheduleText.value.trim();
+  const currentLength = scheduleText.value.length;
+  scheduleCharCount.textContent = `${currentLength} / 20자`;
+
+  if (text === "") {
+    scheduleFeedbackMsg.textContent = "일정 내용을 1자 이상 입력해 주세요.";
+    scheduleFeedbackMsg.className = "feedback_msg is-error";
+    scheduleFeedbackMsg.hidden = false;
+    saveScheduleBtn.disabled = true;
+    return false;
+  }
+
+  const currentList = Schedules[selectedDateKey] || [];
+  const isDuplicate = currentList.some(item => item.text.toLowerCase() === text.toLowerCase());
+
+  if (isDuplicate) {
+    scheduleFeedbackMsg.textContent = "⚠️ 이미 같은 날짜에 동일한 일정이 존재해요!";
+    scheduleFeedbackMsg.className = "feedback_msg is-error";
+    scheduleFeedbackMsg.hidden = false;
+    saveScheduleBtn.disabled = true;
+    return false;
+  }
+
+  scheduleFeedbackMsg.textContent = "등록 가능한 일정입니다.";
+  scheduleFeedbackMsg.className = "feedback_msg is-success";
+  scheduleFeedbackMsg.hidden = false;
+  saveScheduleBtn.disabled = false;
+  return true;
+}
+
+scheduleText.addEventListener("input", validateScheduleInput);
+
+// 모달 열기
+function openScheduleModal(dateKey, displayDateStr) {
+  selectedDateKey = dateKey;
+  modalDateTitle.textContent = `${displayDateStr} 일정 관리`;
+
+  scheduleText.value = "";
+  scheduleCharCount.textContent = "0 / 20자";
+  scheduleFeedbackMsg.hidden = true;
+
+  // 버튼 및 카드 블러 상태 완전 초기화
+  saveScheduleBtn.disabled = false;
+  saveScheduleBtn.textContent = "일정 저장";
+  modalContentCard.classList.remove("submitting");
+
+  isRangeCheckbox.checked = false;
+  rangeDateArea.hidden = true;
+  scheduleEndDate.disabled = true;
+  scheduleEndDate.value = "";
+
+  scheduleTagSelect.innerHTML = "";
+  Object.keys(Tags).forEach(tagName => {
+    const opt = document.createElement("option");
+    opt.value = tagName;
+    opt.textContent = tagName;
+    scheduleTagSelect.appendChild(opt);
+  });
+
+  renderExistingSchedules(dateKey);
+  scheduleModal.hidden = false;
+  scheduleText.focus();
+}
+
+// 모달 닫기
+function closeScheduleModal() {
+  scheduleModal.hidden = true;
+  selectedDateKey = null;
+  scheduleFeedbackMsg.hidden = true;
+  modalContentCard.classList.remove("submitting");
+  saveScheduleBtn.disabled = false;
+  saveScheduleBtn.textContent = "일정 저장";
+}
+
+// 모달 내 기존 일정 렌더링 및 삭제
+function renderExistingSchedules(dateKey) {
+  const list = Schedules[dateKey] || [];
+  existingScheduleList.innerHTML = "";
+
+  if (list.length === 0) {
+    existingScheduleArea.hidden = true;
+    return;
+  }
+
+  existingScheduleArea.hidden = false;
+  list.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.className = `existing_schedule_item tag-${item.color}`;
+    li.innerHTML = `
+      <span>[${item.tag}] ${item.text}</span>
+      <span class="delete_hint">삭제</span>
+    `;
+
+    li.addEventListener("click", () => {
+      if (confirm(`'${item.text}' 일정을 삭제하시겠어요?`)) {
+        Schedules[dateKey].splice(index, 1);
+        if (Schedules[dateKey].length === 0) {
+          delete Schedules[dateKey];
+        }
+        renderCalendar();
+        renderExistingSchedules(dateKey);
+      }
+    });
+
+    existingScheduleList.appendChild(li);
+  });
+}
+
+// 폼 제출 (안전한 기간 루프 및 블러/등록 완결)
+scheduleForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const text = scheduleText.value.trim();
+
+  if (text === "") {
+    showToast("일정 내용을 입력해 주세요.", "error");
+    scheduleText.focus();
+    return;
+  }
+
+  const currentList = Schedules[selectedDateKey] || [];
+  const isDuplicate = currentList.some(item => item.text.toLowerCase() === text.toLowerCase());
+  if (isDuplicate) {
+    showToast("중복된 일정이 존재해요.", "error");
+    scheduleFeedbackMsg.textContent = "⚠️ 이미 같은 날짜에 동일한 일정이 존재해요!";
+    scheduleFeedbackMsg.className = "feedback_msg is-error";
+    scheduleFeedbackMsg.hidden = false;
+    scheduleText.focus();
+    return;
+  }
+
+  // 기간 검증
+  if (isRangeCheckbox.checked) {
+    if (!scheduleEndDate.value) {
+      showToast("종료 날짜를 선택해 주세요.", "error");
+      scheduleEndDate.focus();
+      return;
+    }
+    if (scheduleEndDate.value < selectedDateKey) {
+      showToast("종료 날짜는 시작 날짜보다 빠를 수 없어요.", "error");
+      scheduleEndDate.focus();
+      return;
+    }
+  }
+
+  // 1) 제출 진행 중 상태로 UI 잠금
+  saveScheduleBtn.disabled = true;
+  saveScheduleBtn.textContent = "등록 중...";
+  showToast("일정을 등록 중이에요...", "success");
+  modalContentCard.classList.add("submitting");
+
+  const selectedTag = scheduleTagSelect.value;
+  const tagColor = Tags[selectedTag] || "purple";
+
+  // 2) 0.35초 후 안전하게 데이터 반영 및 모달 닫기
+  setTimeout(() => {
+    try {
+      if (isRangeCheckbox.checked) {
+        // YYYY-MM-DD 기반의 안전한 날짜 순회
+        const startParts = selectedDateKey.split("-").map(Number);
+        const endParts = scheduleEndDate.value.split("-").map(Number);
+
+        const currentIter = new Date(startParts[0], startParts[1] - 1, startParts[2]);
+        const endLimit = new Date(endParts[0], endParts[1] - 1, endParts[2]);
+
+        while (currentIter <= endLimit) {
+          const k = formatDateKey(currentIter.getFullYear(), currentIter.getMonth(), currentIter.getDate());
+          if (!Schedules[k]) Schedules[k] = [];
+
+          if (!Schedules[k].some(item => item.text === text)) {
+            Schedules[k].push({
+              id: Date.now() + Math.random(),
+              text: text,
+              tag: selectedTag,
+              color: tagColor
+            });
+          }
+          currentIter.setDate(currentIter.getDate() + 1);
+        }
+      } else {
+        if (!Schedules[selectedDateKey]) Schedules[selectedDateKey] = [];
+        Schedules[selectedDateKey].push({
+          id: Date.now(),
+          text: text,
+          tag: selectedTag,
+          color: tagColor
+        });
+      }
+    } catch (err) {
+      console.error("일정 등록 중 오류:", err);
+    } finally {
+      // 3) 화면 갱신 및 모달 닫기 (오류가 나더라도 무조건 잠금 해제)
+      renderCalendar();
+      closeScheduleModal();
+    }
+  }, 350);
+});
+
+// 모달 닫기 버튼 이벤트
+closeScheduleModalBtn.addEventListener("click", closeScheduleModal);
+cancelScheduleBtn.addEventListener("click", closeScheduleModal);
+scheduleModal.addEventListener("click", (e) => {
+  if (e.target === scheduleModal) closeScheduleModal();
+});
 
 function lockSubmitButton() {
   isSubmitTag = true;
@@ -154,7 +396,6 @@ function getWeekNumber(date) {
   return Math.ceil((currentDate + firstDay) / 7);
 }
 
-// 캘린더 날짜 셀 공통 생성 헬퍼 함수
 function createCalendarCell(year, month, date, isOtherMonth = false) {
   const li = document.createElement("li");
   li.className = "calendar_box";
@@ -176,7 +417,6 @@ function createCalendarCell(year, month, date, isOtherMonth = false) {
     li.classList.add("is-today");
   }
 
-  // 일정 뱃지 목록
   const badgeUl = document.createElement("ul");
   badgeUl.className = "schedule_badge_list";
 
@@ -190,7 +430,6 @@ function createCalendarCell(year, month, date, isOtherMonth = false) {
   }
   li.appendChild(badgeUl);
 
-  // 날짜 클릭 시 일정 모달 오픈
   li.addEventListener("click", () => {
     const displayStr = `${year}년 ${month + 1}월 ${date}일`;
     openScheduleModal(dateKey, displayStr);
@@ -206,7 +445,6 @@ function renderCalendar() {
 
   calendarList.innerHTML = "";
 
-  // 1) 월간 모드
   if (currentViewMode === "month") {
     calendarWeekdays.classList.remove("is-hidden");
     calendarList.classList.remove("week-mode", "day-mode");
@@ -235,8 +473,6 @@ function renderCalendar() {
       li.textContent = date;
       calendarList.appendChild(li);
     }
-
-  // 2) 주간 모드
   } else if (currentViewMode === "week") {
     calendarWeekdays.classList.remove("is-hidden");
     calendarList.classList.remove("day-mode");
@@ -258,10 +494,8 @@ function renderCalendar() {
         createCalendarCell(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), isOther)
       );
     }
-
-  // 3) 일간(Daily) 모드
   } else {
-    calendarWeekdays.classList.add("is-hidden"); 
+    calendarWeekdays.classList.add("is-hidden");
     calendarList.classList.remove("week-mode");
     calendarList.classList.add("day-mode");
 
@@ -297,7 +531,6 @@ function renderCalendar() {
           <span><span class="card_badge">${item.tag}</span>${item.text}</span>
           <span class="delete_hint" style="font-size:12px; color:var(--text-sub);">관리 / 삭제</span>
         `;
-        // 카드 클릭 시 해당 날짜 일정 관리 모달 오픈
         cardLi.addEventListener("click", () => {
           openScheduleModal(dateKey, displayDateStr);
         });
@@ -305,7 +538,6 @@ function renderCalendar() {
       });
     }
 
-    // 일간 모드 상단 [+ 새 일정 등록] 버튼 클릭 시 모달 오픈
     container.querySelector("#btnDayAddSchedule").addEventListener("click", () => {
       openScheduleModal(dateKey, displayDateStr);
     });
@@ -494,64 +726,6 @@ function goToPrevStep() {
   }
 }
 
-function openScheduleModal(dateKey, displayDateStr) {
-  selectedDateKey = dateKey;
-  modalDateTitle.textContent = `${displayDateStr} 일정 관리`;
-  scheduleText.value = "";
-  scheduleErrorMsg.hidden = true;
-
-  scheduleTagSelect.innerHTML = "";
-  Object.keys(Tags).forEach(tagName => {
-    const opt = document.createElement("option");
-    opt.value = tagName;
-    opt.textContent = tagName;
-    scheduleTagSelect.appendChild(opt);
-  });
-
-  renderExistingSchedules(dateKey);
-  scheduleModal.hidden = false;
-  scheduleText.focus();
-}
-
-function closeScheduleModal() {
-  scheduleModal.hidden = true;
-  selectedDateKey = null;
-  scheduleErrorMsg.hidden = true;
-}
-
-function renderExistingSchedules(dateKey) {
-  const list = Schedules[dateKey] || [];
-  existingScheduleList.innerHTML = "";
-
-  if (list.length === 0) {
-    existingScheduleArea.hidden = true;
-    return;
-  }
-
-  existingScheduleArea.hidden = false;
-  list.forEach((item, index) => {
-    const li = document.createElement("li");
-    li.className = `existing_schedule_item tag-${item.color}`;
-    li.innerHTML = `
-      <span>[${item.tag}] ${item.text}</span>
-      <span class="delete_hint">삭제</span>
-    `;
-
-    li.addEventListener("click", () => {
-      if (confirm(`'${item.text}' 일정을 삭제하시겠어요?`)) {
-        Schedules[dateKey].splice(index, 1);
-        if (Schedules[dateKey].length === 0) {
-          delete Schedules[dateKey];
-        }
-        renderCalendar();
-        renderExistingSchedules(dateKey);
-      }
-    });
-
-    existingScheduleList.appendChild(li);
-  });
-}
-
 tabMonth.addEventListener("click", () => switchCalendarView("month"));
 tabWeek.addEventListener("click", () => switchCalendarView("week"));
 
@@ -630,41 +804,6 @@ window.addEventListener("resize", () => {
   if (!tutorialOverlay.hidden) {
     renderTutorialStep(currentTutorialStep);
   }
-});
-
-scheduleForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const text = scheduleText.value.trim();
-
-  if (text === "") {
-    scheduleErrorMsg.textContent = "일정 내용을 입력해주세요!";
-    scheduleErrorMsg.hidden = false;
-    scheduleText.focus();
-    return;
-  }
-
-  const selectedTag = scheduleTagSelect.value;
-  const tagColor = Tags[selectedTag] || "purple";
-
-  if (!Schedules[selectedDateKey]) {
-    Schedules[selectedDateKey] = [];
-  }
-
-  Schedules[selectedDateKey].push({
-    id: Date.now(),
-    text: text,
-    tag: selectedTag,
-    color: tagColor
-  });
-
-  renderCalendar();
-  closeScheduleModal();
-});
-
-closeScheduleModalBtn.addEventListener("click", closeScheduleModal);
-cancelScheduleBtn.addEventListener("click", closeScheduleModal);
-scheduleModal.addEventListener("click", (e) => {
-  if (e.target === scheduleModal) closeScheduleModal();
 });
 
 switchCalendarView(currentViewMode);
