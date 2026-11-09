@@ -124,7 +124,7 @@ function showToast(message, type = "success", duration = 2000) {
     toastNotification.classList.remove("is-show");
     setTimeout(() => {
       toastNotification.hidden = true;
-    }, 300);
+    }, 250);
   }, duration);
 }
 
@@ -188,10 +188,9 @@ function openScheduleModal(dateKey, displayDateStr) {
   scheduleCharCount.textContent = "0 / 20자";
   scheduleFeedbackMsg.hidden = true;
 
-  // 버튼 및 카드 블러 상태 완전 초기화
+  modalContentCard.classList.remove("submitting");
   saveScheduleBtn.disabled = false;
   saveScheduleBtn.textContent = "일정 저장";
-  modalContentCard.classList.remove("submitting");
 
   isRangeCheckbox.checked = false;
   rangeDateArea.hidden = true;
@@ -216,6 +215,7 @@ function closeScheduleModal() {
   scheduleModal.hidden = true;
   selectedDateKey = null;
   scheduleFeedbackMsg.hidden = true;
+
   modalContentCard.classList.remove("submitting");
   saveScheduleBtn.disabled = false;
   saveScheduleBtn.textContent = "일정 저장";
@@ -263,6 +263,9 @@ scheduleForm.addEventListener("submit", (e) => {
 
   if (text === "") {
     showToast("일정 내용을 입력해 주세요.", "error");
+    scheduleFeedbackMsg.textContent = "일정 내용을 1자 이상 입력해 주세요.";
+    scheduleFeedbackMsg.className = "feedback_msg is-error";
+    scheduleFeedbackMsg.hidden = false;
     scheduleText.focus();
     return;
   }
@@ -337,6 +340,7 @@ scheduleForm.addEventListener("submit", (e) => {
       }
     } catch (err) {
       console.error("일정 등록 중 오류:", err);
+      showToast("일정 저장 중 오류가 발생했습니다.", "error")
     } finally {
       // 3) 화면 갱신 및 모달 닫기 (오류가 나더라도 무조건 잠금 해제)
       renderCalendar();

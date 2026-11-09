@@ -751,6 +751,8 @@ body.night-mode .tagList li {
 }
 
 .toast_notification {
+    display: flex !important;
+    z-index: 3000 !important;
     position: fixed;
     top: 24px;
     left: 50%;
@@ -768,17 +770,21 @@ body.night-mode .tagList li {
     pointer-events: none;
 }
 
+.toast_notification[hidden] {
+    display: none !important;
+}
+
 .toast_notification.is-show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
 }
 
 .toast_notification.toast-error {
-    background-color: #eb5757;
+    background-color: #eb5757 !important; 
 }
 
 .toast_notification.toast-success {
-    background-color: var(--primary-btn);
+    background-color: var(--primary-btn) !important; 
 }
 
 .modal_actions {
