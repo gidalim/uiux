@@ -76,14 +76,15 @@ function formatDateKey(year, month, date) {
 }
 
 const _initToday = new Date();
-const todayDateKey = formatDateKey(_initToday.getFullYear(), _initToday.getMonth(), _initToday.getDate());
+const _todayKey = formatDateKey(_initToday.getFullYear(), _initToday.getMonth(), _initToday.getDate());
 
 let Schedules = {
-  [todayDateKey]: [
-    { id: 1, text: "오늘", tag: "과제", color: "green" }
+  [_todayKey]: [
+    { id: 1, text: "UI/UX 과제 제출하기", tag: "과제", color: "green" },
+    { id: 2, text: "웹 프로그래밍 강의 수강", tag: "강의", color: "blue" }
   ],
   "2026-10-25": [
-    { id: 2, text: "UI/UX 중간 과제 제출", tag: "과제", color: "green" }
+    { id: 3, text: "UI/UX 중간 과제 제출", tag: "과제", color: "green" }
   ]
 };
 
@@ -201,6 +202,7 @@ function createCalendarCell(year, month, date, isOtherMonth = false) {
 function renderCalendar() {
   const currentYear = viewDate.getFullYear();
   const currentMonth = viewDate.getMonth();
+  const currentDate = viewDate.getDate();
 
   calendarList.innerHTML = "";
 
