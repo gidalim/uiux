@@ -1,4 +1,4 @@
-:root{
+:root {
     --bg-page: #FFFFFF;
     --bg-card: #F5F3F7;
     --bg-border: #FFFFFF;
@@ -44,7 +44,13 @@ body.night-mode {
     --tag-red-bg: #522E2A;    --tag-red-text: #EB5757;
 }
 
-body{
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
     color: var(--text-main);
     font-family: 'Noto Sans KR', sans-serif;
     font-size: 16px;
@@ -56,13 +62,13 @@ body{
 
 header,
 main,
-footer{
+footer {
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 24px;
 }
 
-img{
+img {
     display: block;
     width: 100%;
     max-width: 720px;
@@ -71,69 +77,69 @@ img{
     border-radius: 16px;
 }
 
-header{
+header {
     padding-top: 48px;
     padding-bottom: 32px;
 }
 
-section{
+section {
     margin-top: 56px;
 }
 
-footer{
+footer {
     padding-top: 32px;
     padding-bottom: 32px;
 }
 
-nav{
+nav {
     display: flex;
     gap: 24px;
     margin-top: 24px;
 }
 
-nav a{
+nav a {
     color: var(--text-sub);
     font-weight: 700;
     text-decoration: none;
 }
     
-h1{
+h1 {
     font-size: 48px;
     font-weight: 800;
     line-height: 1.2;
     letter-spacing: -0.02em;
 }
 
-h2{
+h2 {
     color: var(--accent-purple);
     font-size: 32px;
     font-weight: 800;
     line-height: 1.3;
 }
 
-h3{
+h3 {
     font-size: 22px;
     font-weight: 700;
     line-height: 1.4;
 }
 
-p{
-    color : var(--text-sub);
+p {
+    color: var(--text-sub);
 }
 
-/* 태그 및 버튼 */
+/* 기본 폼 및 버튼 */
 input,
-button{
+button {
     font: inherit;
 }
 
-form{
+form {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-input{
+input {
     flex: 1;
     min-width: 0;
     padding: 12px 18px;
@@ -143,7 +149,7 @@ input{
     color: var(--text-main);
 }
 
-button{
+button {
     padding: 12px 18px;
     border: 0;
     border-radius: 10px;
@@ -153,22 +159,22 @@ button{
     transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-button:hover{
+button:hover {
     background-color: var(--primary-btn-hover);
 }
 
 button:focus,
-input:focus{
+input:focus {
     outline: 3px solid var(--input-border);
     outline-offset: 2px;
 }
 
-button:active{
+button:active {
     background-color: var(--bg-card);
     transform: scale(0.98);
 }
 
-#themeButton{
+#themeButton {
     background-color: var(--bg-card);
     color: var(--text-main);
     border: 1px solid var(--input-border);
@@ -204,7 +210,7 @@ button:active{
 }
 
 /* 캘린더 */
-.calendar_header{
+.calendar_header {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -213,7 +219,7 @@ button:active{
 }
 
 .calendar_header h2 {
-    margin: 0px;
+    margin: 0;
     font-size: 26px;
     min-width: 180px;
     text-align: center;
@@ -265,6 +271,10 @@ button:active{
     font-size: 14px;
 }
 
+.calendar_weekdays.is-hidden {
+    display: none !important;
+}
+
 .calendar_list {
     list-style-type: none;
     padding-left: 0;
@@ -287,7 +297,15 @@ button:active{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, transform 0.2s ease;
+}
+
+.calendar_box:hover:not(.other-month):not(.prev-month) {
+    border-color: var(--accent-purple);
+    transform: translateY(-2px);
 }
 
 .calendar_list.week-mode .calendar_box {
@@ -306,10 +324,37 @@ button:active{
     box-shadow: 0 0 8px rgba(154, 115, 181, 0.25);
 }
 
-.calendar_weekdays.is-hidden {
-    display: none !important;
+.calendar_box .date_num {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: inline-block;
 }
 
+.calendar_box .schedule_badge_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.schedule_badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 6px;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+    display: block;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* 일간 모드 */
 .calendar_list.day-mode {
     display: flex !important;
     flex-direction: column !important;
@@ -365,6 +410,7 @@ button:active{
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.15s ease;
 }
+
 .day_view_header .btn_add_day_schedule:hover {
     background-color: var(--primary-btn-hover);
 }
@@ -378,7 +424,6 @@ button:active{
     gap: 8px; 
 }
 
-/* 일간 뷰 일정 카드 목록 */
 .day_schedule_card {
     display: flex;
     align-items: center;
@@ -431,12 +476,6 @@ body.night-mode .day_schedule_card .card_badge {
     transition: color 0.5s ease;
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
 /* 태그 관리 */
 .tag_box {
     padding: 24px;
@@ -471,14 +510,14 @@ body.night-mode .tagList li {
     border-color: rgba(255, 255, 255, 0.08);
 }
 
-#tagSubmitButton{
+#tagSubmitButton {
     color: #fdfdfd;
     background-color: var(--primary-btn);
     transition: background-color 0.25s ease, transform 0.15s ease, opacity 0.25s ease;
 }
 
-#tagSubmitButton.is-success{
-    color:#245c3a;
+#tagSubmitButton.is-success {
+    color: #245c3a;
     background-color: var(--bg-card);
     border: 1px solid var(--input-border);
     font-weight: 700;
@@ -527,10 +566,6 @@ body.night-mode .tagList li {
     filter: brightness(0.95);
 }
 
-.tag_dropdown[hidden] {
-    display: none !important;
-}
-
 .tag_dropdown li {
     padding: 8px 12px;
     border-radius: 6px;
@@ -542,7 +577,7 @@ body.night-mode .tagList li {
     transition: background-color 0.15s ease;
 }
 
-/* 태그 색상 */
+/* 태그 색상 유틸리티 */
 .tag-gray   { background-color: var(--tag-gray-bg);   color: var(--tag-gray-text); }
 .tag-brown  { background-color: var(--tag-brown-bg);  color: var(--tag-brown-text); }
 .tag-orange { background-color: var(--tag-orange-bg); color: var(--tag-orange-text); }
@@ -553,52 +588,7 @@ body.night-mode .tagList li {
 .tag-pink   { background-color: var(--tag-pink-bg);   color: var(--tag-pink-text); }
 .tag-red    { background-color: var(--tag-red-bg);    color: var(--tag-red-text); }
 
-
-/* 일정 모달 박스 */
-.calendar_box {
-    cursor: pointer;
-    position: relative;
-    user-select: none;
-}
-
-.calendar_box:hover:not(.other-month):not(.prev-month) {
-    border-color: var(--accent-purple);
-    transform: translateY(-2px);
-}
-
-/* 날짜 박스 상단 숫자 */
-.calendar_box .date_num {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    display: inline-block;
-}
-
-/* 날짜 박스 내부 일정 칩 컨테이너 */
-.calendar_box .schedule_badge_list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
-}
-
-/* 개별 일정 칩 */
-.schedule_badge {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 6px;
-    border-radius: 4px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    line-height: 1.2;
-    display: block;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
+/* 일정 등록 모달 */
 .modal_backdrop {
     position: fixed;
     inset: 0;
@@ -630,28 +620,6 @@ body.night-mode .tagList li {
     transition: filter 0.3s ease;
 }
 
-#scheduleForm {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
-}
-
-#scheduleForm .form_group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin: 0;
-}
-
-#scheduleForm input,
-#scheduleForm select {
-    width: 100%;
-    min-height: 42px;
-    padding: 10px 14px;
-    font-size: 14px;
-}
-
 .modal_header {
     display: flex;
     justify-content: space-between;
@@ -665,11 +633,18 @@ body.night-mode .tagList li {
     color: var(--text-main);
 }
 
+#scheduleForm {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+}
+
 .form_group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin: 0;
     text-align: left;
 }
 
@@ -683,13 +658,24 @@ body.night-mode .tagList li {
     color: #eb5757;
 }
 
-.form_group select {
+#scheduleForm input,
+#scheduleForm select {
+    width: 100%;
+    min-height: 42px;
     padding: 10px 14px;
+    font-size: 14px;
+}
+
+#scheduleText:focus {
+    outline: 2px solid var(--accent-purple) !important;
+    outline-offset: 1px;
+}
+
+.form_group select {
     border: 1px solid var(--input-border);
     border-radius: 8px;
     background-color: var(--bg-card);
     color: var(--text-main);
-    font-size: 14px;
     outline: none;
 }
 
@@ -703,18 +689,10 @@ body.night-mode .tagList li {
     align-items: center;
 }
 
-/* 글자 수 표시 */
 .char_count {
     font-size: 12px;
     color: var(--text-sub);
     font-weight: 500;
-}
-
-.feedback_msg {
-    font-size: 12px;
-    font-weight: 600;
-    margin: 4px 0 0 0;
-    line-height: 1.4;
 }
 
 .feedback_msg {
@@ -733,10 +711,9 @@ body.night-mode .tagList li {
 }
 
 .form_group.checkbox_group {
-    margin-bottom: 12px;
+    margin-bottom: 4px;
 }
 
-/* 기간 설정 */
 .range_date_area {
     background-color: var(--bg-card);
     border: 1px dashed var(--input-border);
@@ -748,43 +725,6 @@ body.night-mode .tagList li {
     font-size: 12px;
     color: var(--text-sub);
     margin: 4px 0 0 0;
-}
-
-.toast_notification {
-    display: flex !important;
-    z-index: 3000 !important;
-    position: fixed;
-    top: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background-color: #2f2f2f;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 10px 20px;
-    border-radius: 24px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    z-index: 2000;
-    opacity: 0;
-    transition: transform 0.25s ease, opacity 0.25s ease;
-    pointer-events: none;
-}
-
-.toast_notification[hidden] {
-    display: none !important;
-}
-
-.toast_notification.is-show {
-    opacity: 1 !important;
-    transform: translateX(-50%) translateY(0) !important;
-}
-
-.toast_notification.toast-error {
-    background-color: #eb5757 !important; 
-}
-
-.toast_notification.toast-success {
-    background-color: var(--primary-btn) !important; 
 }
 
 .modal_actions {
@@ -823,10 +763,6 @@ body.night-mode .tagList li {
     border: none;
 }
 
-.modal_actions .btn_primary:hover {
-    background-color: var(--primary-btn-hover);
-}
-
 .modal_actions .btn_primary:hover:not(:disabled) {
     background-color: var(--primary-btn-hover);
 }
@@ -840,11 +776,6 @@ body.night-mode .tagList li {
     pointer-events: none;                              
     transform: none !important;
     box-shadow: none !important;
-}
-
-#scheduleText:focus {
-    outline: 2px solid var(--accent-purple) !important;
-    outline-offset: 1px;
 }
 
 .existing_schedule_area {
@@ -872,7 +803,6 @@ body.night-mode .tagList li {
 }
 
 .existing_schedule_item {
-    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -895,7 +825,40 @@ body.night-mode .tagList li {
     margin-left: 8px;
 }
 
-/* 깃허브 링크 박스 */
+/* 토스트 알림 */
+.toast_notification {
+    display: flex !important;
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background-color: #2f2f2f;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    z-index: 3000 !important;
+    opacity: 0;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.toast_notification.is-show {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+.toast_notification.toast-error {
+    background-color: #eb5757 !important; 
+}
+
+.toast_notification.toast-success {
+    background-color: var(--primary-btn) !important; 
+}
+
+/* 개발자 페이지 */
 .developer_box {
     background-color: var(--bg-card);
     border: 1px solid var(--bg-border);
@@ -989,7 +952,7 @@ body.night-mode .tagList li {
     to { opacity: 1; transform: translateY(0); }
 }
 
-
+/* 온보딩 및 튜토리얼 */
 .onboarding_backdrop {
     position: fixed;
     inset: 0;
@@ -1161,13 +1124,12 @@ body.night-mode .tagList li {
     display: none !important;
 }
 
-/* 튜토리얼 중 외부 화면 관리 */
 body.scroll-lock {
     overflow: hidden !important;
     touch-action: none !important;
 }
 
-/* 가로폭 768px 이하 모바일 반응형 */
+/* 모바일 반응형 (768px 이하) */
 @media (max-width: 768px) {
     body {
         font-size: 15px;
@@ -1186,7 +1148,6 @@ body.scroll-lock {
         font-size: 24px;
     }
 
-    /* 네비게이션 메뉴 */
     nav {
         flex-direction: column;
         align-items: stretch;
@@ -1197,7 +1158,6 @@ body.scroll-lock {
         padding: 8px 0;
     }
 
-    /* 캘린더 요일 및 날짜 박스 */
     .calendar_weekdays {
         gap: 4px;
         font-size: 12px;
@@ -1220,6 +1180,7 @@ body.scroll-lock {
         padding: 8px;
         font-size: 14px;
     }
+
     .calendar_list.day-mode {
         display: flex !important;
         flex-direction: column !important;
@@ -1257,86 +1218,86 @@ body.scroll-lock {
     }
 
     .tutorial_tooltip {
-    width: calc(100vw - 32px) !important;
-    left: 16px !important;
-    right: 16px !important;
-    top: 16px !important;     
-    bottom: auto !important;  
-    padding: 16px;
-    border-radius: 14px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  }
+        width: calc(100vw - 32px) !important;
+        left: 16px !important;
+        right: 16px !important;
+        top: 16px !important;     
+        bottom: auto !important;  
+        padding: 16px;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
 
-  .tutorial_tooltip h3 {
-    font-size: 16px;
-    margin: 0 0 6px;
-  }
+    .tutorial_tooltip h3 {
+        font-size: 16px;
+        margin: 0 0 6px;
+    }
 
-  .tutorial_tooltip p {
-    font-size: 13px;
-    line-height: 1.45;
-    margin: 0 0 14px;
-  }
+    .tutorial_tooltip p {
+        font-size: 13px;
+        line-height: 1.45;
+        margin: 0 0 14px;
+    }
 
-  .tooltip_footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-  }
+    .tooltip_footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
 
-  .tooltip_right_btns {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
+    .tooltip_right_btns {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
 
-  .tutorial_tooltip button {
-    width: auto !important;
-    min-height: auto !important;
-    white-space: nowrap !important;
-    margin: 0;
-    cursor: pointer;
-  }
+    .tutorial_tooltip button {
+        width: auto !important;
+        min-height: auto !important;
+        white-space: nowrap !important;
+        margin: 0;
+        cursor: pointer;
+    }
 
-  .btn_nav {
-    font-size: 13px;
-    padding: 8px 14px;
-    border-radius: 8px;
-  }
+    .btn_nav {
+        font-size: 13px;
+        padding: 8px 14px;
+        border-radius: 8px;
+    }
 
-  .btn_text {
-    font-size: 13px;
-    padding: 8px 10px;
-    color: var(--text-sub);
-  }
+    .btn_text {
+        font-size: 13px;
+        padding: 8px 10px;
+        color: var(--text-sub);
+    }
 
-  .tooltip_right_btns .btn_primary {
-    font-size: 13px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 700;
-  }
+    .tooltip_right_btns .btn_primary {
+        font-size: 13px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+    }
 
-  .btn_close {
-    font-size: 18px;
-    padding: 4px;
-  }
+    .btn_close {
+        font-size: 18px;
+        padding: 4px;
+    }
 
-  .modal_card {
+    .modal_card {
         padding: 20px 16px;
-  }
-  .modal_actions {
+    }
+
+    .modal_actions {
         display: flex;
         flex-direction: row; 
         justify-content: flex-end;
         gap: 8px;
-  }
-    
-  .modal_actions button {
+    }
+        
+    .modal_actions button {
         width: auto !important;
         flex: 1 !important; 
         min-height: 42px !important;
-  }
-
+    }
 }

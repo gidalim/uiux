@@ -11,19 +11,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 일정 정리용 캘린더 서비스 
-  사용자: 개인, 팀
-  목적: 주간 일정 관리, 월간 일정 관리
-  핵심 행동: 날짜, 태그, 내용 등을 제공하며 사용자가 일정을 등록, 관리할 수 있도록 지원
-  정보 순서: 날짜, 만료여부, 태그, 내용
-  -->
-
   <header>
     <h1>캘린더 서비스</h1>
     <p>과제와 학습일정을 정리합니다</p>
     <div class="header_controls">
-        <button id="themeButton" type="button" aria-label="테마 전환">☀️</button>
-        <button id="restartTutorialBtn" type="button" class="btn_text">튜토리얼 다시 보기</button>
+      <button id="themeButton" type="button" aria-label="테마 전환">☀️</button>
+      <button id="restartTutorialBtn" type="button" class="btn_text">튜토리얼 다시 보기</button>
     </div>
     <nav aria-label="주요 메뉴">
       <a href="#about">서비스 소개</a>
@@ -32,121 +25,126 @@
       <a href="#detail">개발자 페이지</a>
     </nav>
   </header>
+
   <div id="scheduleModal" class="modal_backdrop" hidden>
-  <div class="modal_card" role="dialog" aria-labelledby="modalDateTitle" aria-modal="true">
-    <div class="modal_header">
-      <h3 id="modalDateTitle">일정 등록</h3>
-      <button id="closeScheduleModalBtn" type="button" class="btn_close" aria-label="모달 닫기">✕</button>
-    </div>
-    <form id="scheduleForm" autocomplete="off">
-      <div class="form_group">
-        <div class="label_row">
-          <label for="scheduleText">일정 내용 <span class="required">*</span></label>
-          <span id="scheduleCharCount" class="char_count">0 / 20자</span>
+    <div class="modal_card" role="dialog" aria-labelledby="modalDateTitle" aria-modal="true">
+      <div class="modal_header">
+        <h3 id="modalDateTitle">일정 등록</h3>
+        <button id="closeScheduleModalBtn" type="button" class="btn_close" aria-label="모달 닫기">✕</button>
+      </div>
+      <form id="scheduleForm" autocomplete="off">
+        <div class="form_group">
+          <div class="label_row">
+            <label for="scheduleText">일정 내용 <span class="required">*</span></label>
+            <span id="scheduleCharCount" class="char_count">0 / 20자</span>
+          </div>
+          <input type="text" id="scheduleText" maxlength="20" placeholder="UI/UX 과제 제출하기">
+          <p id="scheduleFeedbackMsg" class="feedback_msg" hidden></p>
         </div>
-        <input type="text" id="scheduleText" maxlength="20" placeholder="UI/UX 과제 제출하기">
-        <p id="scheduleFeedbackMsg" class="feedback_msg" hidden></p>
+        <div class="form_group">
+          <label for="scheduleTagSelect">연결할 태그</label>
+          <select id="scheduleTagSelect"></select>
+        </div>
+        <div class="form_group checkbox_group">
+          <label class="dev_checkbox_label" for="isRangeCheckbox">
+            <input type="checkbox" id="isRangeCheckbox">
+            <span>기간 일정으로 등록 (시험기간/프로젝트)</span>
+          </label>
+        </div>
+        <div id="rangeDateArea" class="form_group range_date_area" hidden>
+          <label for="scheduleEndDate">종료 날짜 <span class="required">*</span></label>
+          <input type="date" id="scheduleEndDate" disabled>
+          <p class="help_text">선택한 종료일까지 매일 일정이 자동으로 등록돼요.</p>
+        </div>
+        <div class="modal_actions">
+          <button type="button" id="cancelScheduleBtn" class="btn_secondary">취소</button>
+          <button type="submit" id="saveScheduleBtn" class="btn_primary">일정 저장</button>
+        </div>
+      </form>
+      <div id="existingScheduleArea" class="existing_schedule_area" hidden>
+        <h4>등록된 일정 (클릭 시 삭제)</h4>
+        <ul id="existingScheduleList" class="existing_schedule_list"></ul>
       </div>
-      <div class="form_group">
-        <label for="scheduleTagSelect">연결할 태그</label>
-        <select id="scheduleTagSelect"></select>
-      </div>
-      <div class="form_group checkbox_group">
-        <label class="dev_checkbox_label" for="isRangeCheckbox">
-          <input type="checkbox" id="isRangeCheckbox">
-          <span>기간 일정으로 등록 (시험기간/프로젝트)</span>
-        </label>
-      </div>
-      <div id="rangeDateArea" class="form_group range_date_area" hidden>
-        <label for="scheduleEndDate">종료 날짜 <span class="required">*</span></label>
-        <input type="date" id="scheduleEndDate" disabled>
-        <p class="help_text">선택한 종료일까지 매일 일정이 자동으로 등록돼요.</p>
-      </div>
-      <div class="modal_actions">
-        <button type="button" id="cancelScheduleBtn" class="btn_secondary">취소</button>
-        <button type="submit" id="saveScheduleBtn" class="btn_primary">일정 저장</button>
-      </div>
-    </form>
-    <div id="existingScheduleArea" class="existing_schedule_area" hidden>
-      <h4>등록된 일정 (클릭 시 삭제)</h4>
-      <ul id="existingScheduleList" class="existing_schedule_list"></ul>
     </div>
   </div>
-</div>
-    <main>
-      <section id="about"> 
-        <h2>서비스 소개</h2>
-        <h3>사용 방법</h3>
-          <img src="assets/images/header_img.png"  alt="헤더 일러스트">
-          <p>개인 및 팀단위로 일정을 관리합니다</p>
-          <p>태그와 짧은 내용을 통해 직관적 서비스를 제공합니다</p>
-      </section>
-      <section id="calendar"> 
-        <!-- 캘린더 박스 -->
-        <div class="calendar_header">
-          <button id="prevMonthButton" type="button" aria-label="이전 달">◀</button>
-          <h2 id="calendarTitle" aria-live="polite">캘린더</h2>
-          <button id="nextMonthButton" type="button" aria-label="다음 달">▶</button>
+
+  <main>
+    <section id="about"> 
+      <h2>서비스 소개</h2>
+      <h3>사용 방법</h3>
+      <img src="assets/images/header_img.png" alt="헤더 일러스트">
+      <p>개인 및 팀단위로 일정을 관리합니다</p>
+      <p>태그와 짧은 내용을 통해 직관적 서비스를 제공합니다</p>
+    </section>
+
+    <section id="calendar"> 
+      <div class="calendar_header">
+        <button id="prevMonthButton" type="button" aria-label="이전 기간">◀</button>
+        <h2 id="calendarTitle" aria-live="polite">캘린더</h2>
+        <button id="nextMonthButton" type="button" aria-label="다음 기간">▶</button>
+      </div>
+      <div class="view_tab_group" role="tablist" aria-label="캘린더 뷰 전환">
+        <button id="tabMonth" role="tab" aria-selected="true" aria-controls="calendarList" tabindex="0">월간</button>
+        <button id="tabWeek" role="tab" aria-selected="false" aria-controls="calendarList" tabindex="-1">주간</button>
+        <button id="tabDay" role="tab" aria-selected="false" aria-controls="calendarList" tabindex="-1">일간</button>
+      </div>
+      <ul class="calendar_weekdays" aria-hidden="true">
+        <li>일</li>
+        <li>월</li>
+        <li>화</li>
+        <li>수</li>
+        <li>목</li>
+        <li>금</li>
+        <li>토</li>
+      </ul>
+      <ul class="calendar_list" id="calendarList"></ul>
+    </section>
+
+    <section id="tag" class="tag_box">
+      <h2>태그</h2> 
+      <h3>태그 생성</h3>
+      <form id="tag_form">
+        <label for="tag_name">태그 이름</label>
+        <div class="tag_input_wrapper">
+          <input type="text" id="tag_name" name="tag_name" placeholder="이름을 작성해주세요">
+          <ul class="tag_dropdown" id="tagDropdown" hidden></ul>
         </div>
-        <div class="view_tab_group" role="tablist" aria-label="월간 주간 전환">
-          <button id="tabMonth" role="tab" aria-selected="true" aria-controls="calendarList" tabindex="0">월간</button>
-          <button id="tabWeek" role="tab" aria-selected="false" aria-controls="calendarList" tabindex="-1">주간</button>
-          <button id="tabDay" role="tab" aria-selected="false" aria-controls="calendarList" tabindex="-1">일간</button>
+        <button id="tagSubmitButton" type="submit">만들기</button>
+      </form>
+      <p id="tagMessage" aria-live="polite">
+        하단의 태그를 사용하여 일정을 구분합니다.
+      </p>
+      <ol class="tagList" id="tagList"></ol>  
+    </section>
+
+    <section id="detail">
+      <h2>개발자 페이지</h2>
+      <p>깃허브에서 프로젝트 소스 코드를 확인 할 수 있어요</p>
+      <div class="developer_box">
+        <form id="devAccessForm" class="dev_form">
+          <label class="dev_checkbox_label">
+            <input type="checkbox" id="accessCheckbox">
+            <span>페이지에 방문하시겠어요?</span>
+          </label>
+          <button type="submit" id="accessButton" disabled>깃허브 링크 확인</button>
+        </form>
+        <div id="devLoading" class="dev_loading" hidden aria-live="polite">
+          <div class="spinner"></div>
+          <p>개발자 정보를 불러오는 중입니다...</p>
         </div>
-        <ul class="calendar_weekdays" aria-hidden="true">
-          <li>일</li>
-          <li>월</li>
-          <li>화</li>
-          <li>수</li>
-          <li>목</li>
-          <li>금</li>
-          <li>토</li>
-        </ul>
-         <ul class="calendar_list" id="calendarList">
-         </ul>
-      </section>
-      <section id="tag" class="tag_box">
-        <h2>태그</h2> 
-          <h3>태그 생성</h3>
-          <form id="tag_form">
-            <label for="tag_name">태그 이름</label>
-            <div class="tag_input_wrapper">
-              <input type="text" id="tag_name" name="tag_name" placeholder="이름을 작성해주세요">
-              <ul class="tag_dropdown" id="tagDropdown" hidden></ul>
-            </div>
-            <button id="tagSubmitButton" type="submit">만들기</button>
-          </form>
-            <p id="tagMessage" aria-live="polite">
-              하단의 태그를 사용하여 일정을 구분합니다.
-            </p>
-            <ol class="tagList" id="tagList"></ol>  
-      </section>
-      <section id="detail">
-        <h2>개발자 페이지</h2>
-        <p>깃허브에서 프로젝트 소스 코드를 확인 할 수 있어요</p>
-        <div class="developer_box">
-          <form id="devAccessForm" class="dev_form">
-            <label class="dev_checkbox_label">
-              <input type="checkbox" id="accessCheckbox">
-              <span>페이지에 방문하시겠어요?</span>
-            </label>
-            <button type="submit" id="accessButton" disabled>깃허브 링크 확인</button>
-          </form>
-          <div id="devLoading" class="dev_loading" hidden aria-live="polite">
-           <div class="spinner"></div>
-           <p>개발자 정보를 불러오는 중입니다...</p>
-         </div>
-          <div id="githubLinkCard" class="github_link_card" hidden>
-            <a href="https://github.com/gidalim/uiux" target="_blank" rel="noopener noreferrer">
-              <img src="assets/images/github_mark.png" alt="깃허브 일러스트">
-            </a>
-          </div>
+        <div id="githubLinkCard" class="github_link_card" hidden>
+          <a href="https://github.com/gidalim/uiux" target="_blank" rel="noopener noreferrer">
+            <img src="assets/images/github_mark.png" alt="깃허브 일러스트">
+          </a>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
+  </main>
+
   <footer>
     <small>2026 하반기 캘린더 프로젝트</small>
   </footer>
+
   <div id="onboardingIntro" class="onboarding_backdrop" hidden>
     <div class="onboarding_card" role="dialog" aria-labelledby="introTitle" aria-modal="true">
       <img src="assets/images/header_img.png" alt="캘린더 서비스 시작 일러스트" class="intro_img">
@@ -158,9 +156,9 @@
       </div>
     </div>
   </div>
+
   <div id="tutorialOverlay" class="tutorial_overlay" hidden>
     <div id="spotlightBox" class="spotlight_box" title="클릭하여 다음 단계로 이동"></div>
-
     <div id="tutorialTooltip" class="tutorial_tooltip" role="region" aria-live="polite">
       <div class="tooltip_header">
         <span id="tutorialStepBadge" class="step_badge">Step 1/3</span>
@@ -168,7 +166,6 @@
       </div>
       <h3 id="tutorialTitle">제목</h3>
       <p id="tutorialDesc">설명 문구</p>
-      
       <div class="tooltip_footer">
         <button id="prevStepBtn" type="button" class="btn_nav" disabled>이전</button>
         <div class="tooltip_right_btns">
@@ -178,6 +175,7 @@
       </div>
     </div>
   </div>
+
   <div id="toastNotification" class="toast_notification" hidden aria-live="assertive"></div>
   <script src="script.js"></script>
 </body>
