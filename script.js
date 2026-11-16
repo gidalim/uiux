@@ -61,6 +61,12 @@ const navLinks = document.querySelectorAll("#mainNavList a");
 const pageSections = document.querySelectorAll("main section[id]");
 const stickyNav = document.querySelector(".sticky_nav");
 
+//필터
+const scheduleFilterGroup = document.querySelector("#scheduleFilterGroup");
+const filterResultInfo = document.querySelector("#filterResultInfo");
+const mobileMenuBtn = document.querySelector("#mobileMenuBtn");
+const mainNavList = document.querySelector("#mainNavList");
+
 let toastTimer = null;
 
 let Tags = {
@@ -73,6 +79,7 @@ let selectedDateKey = null;
 let viewDate = new Date();
 let currentViewMode = window.innerWidth <= 768 ? "week" : "month";
 let isSubmitTag = false;
+let selectedFilterTag = "ALL";
 
 const TAG_COLOR_KEYS = ["gray", "brown", "orange", "yellow", "green", "blue", "purple", "pink", "red"];
 
@@ -411,6 +418,18 @@ function createCalendarCell(year, month, date, isOtherMonth = false) {
     li.classList.add("is-today");
   }
 
+  const daySchedules = Schedules[dateKey] || [];
+
+  if (selectedFilterTag !== "ALL") {
+    const hasMatchedTag = daySchedules.some(item => item.tag === selectedFilterTag);
+    if (hasMatchedTag) {
+      const tagColor = Tags[selectedFilterTag] || "purple";
+      li.classList.add("is-filter-match", `match-${tagColor}`);
+    } else {
+      li.classList.add("is-filter-dimmed");
+    }
+  }
+
   const badgeUl = document.createElement("ul");
   badgeUl.className = "schedule_badge_list";
 
@@ -498,7 +517,10 @@ function renderCalendar() {
     calendarTitle.textContent = `${currentYear}년 ${currentMonth + 1}월 ${currentDate}일 (${dayStr})`;
 
     const dateKey = formatDateKey(currentYear, currentMonth, currentDate);
-    const daySchedules = Schedules[dateKey] || [];
+    const rawSchedules = Schedules[dateKey] || [];
+    const daySchedules = selectedFilterTag === "ALL"
+      ? rawSchedules
+      : rawSchedules.filter(item => item.tag === selectedFilterTag);
     const displayDateStr = `${currentYear}년 ${currentMonth + 1}월 ${currentDate}일`;
 
     const container = document.createElement("li");
@@ -859,6 +881,90 @@ function initNavigation() {
   } else {
     syncNavOnScroll();
   }
+}
+
+function renderFilterButtons() {
+  scheduleFilterGroup.innerHTML = "";
+
+  const allBtn = document.createElement("button");
+  allBtn.type = "button";
+  allBtn.className = "filter_btn filter-all";
+  allBtn.textContent = "전체";
+  allBtn.setAttribute("aria-pressed", selectedFilterTag === "ALL" ? "true" : "false");
+  allBtn.addEventListener("click", () => {
+    selectedFilterTag = "ALL";
+    updateFilterUI();
+  });
+  scheduleFilterGroup.appendChild(allBtn);
+
+  Object.entries(Tags).forEach(([tagName, colorKey]) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `filter_btn tag-${colorKey}`;
+    btn.textContent = tagName;
+    btn.setAttribute("aria-pressed", selectedFilterTag === tagName ? "true" : "false");
+    btn.addEventListener("click", () => {
+      selectedFilterTag = tagName;
+      updateFilterUI();
+    });
+    scheduleFilterGroup.appendChild(btn);
+  });
+}
+
+function updateFilterResultInfo() {
+  const allItems = Object.values(Schedules).flat();
+  const totalCount = allItems.length;
+
+  if (totalCount === 0) {
+    filterResultInfo.textContent = "아직 등록된 일정이 없습니다. 캘린더 날짜를 클릭해 새 일정을 추가해 보세요.";
+    filterResultInfo.classList.add("is-empty");
+    return;
+  }
+
+  if (selectedFilterTag === "ALL") {
+    filterResultInfo.textContent = `전체 일정 총 ${totalCount}건이 표시되고 있습니다.`;
+    filterResultInfo.classList.remove("is-empty");
+  } else {
+    const matchedCount = allItems.filter(item => item.tag === selectedFilterTag).length;
+
+    if (matchedCount === 0) {
+      filterResultInfo.textContent = `선택한 '${selectedFilterTag}' 태그에 해당하는 일정이 없습니다.`;
+      filterResultInfo.classList.add("is-empty");
+    } else {
+      filterResultInfo.textContent = `'${selectedFilterTag}' 태그 일정 총 ${matchedCount}건이 강조 표시되고 있습니다.`;
+      filterResultInfo.classList.remove("is-empty");
+    }
+  }
+}
+
+function toggleMobileMenu(forceClose = false) {
+  if (!mobileMenuBtn || !mainNavList) return;
+
+  const isCurrentlyOpen = mainNavList.classList.contains("is-open");
+  const shouldOpen = forceClose ? false : !isCurrentlyOpen;
+
+  mainNavList.classList.toggle("is-open", shouldOpen);
+  mobileMenuBtn.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+  mobileMenuBtn.textContent = shouldOpen ? "메뉴 닫기" : "메뉴 열기";
+}
+
+if (mobileMenuBtn) {
+  mobileMenuBtn.addEventListener("click", () => toggleMobileMenu());
+}
+
+navLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    setActiveNavByHash(link.getAttribute("href"));
+    toggleMobileMenu(true);
+  });
+});
+
+updateFilterUI();
+
+function updateFilterUI() {
+  renderFilterButtons();
+  updateFilterResultInfo();
+  renderCalendar();
 }
 
 // 초기 실행

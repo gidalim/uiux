@@ -21,6 +21,12 @@
   </header>
   <nav class="sticky_nav" aria-label="주요 메뉴">
     <div class="nav_inner">
+      <div class="mobile_nav_bar">
+        <span class="mobile_nav_title">메뉴 탐색</span>
+        <button type="button" id="mobileMenuBtn" class="mobile_menu_btn" aria-expanded="false" aria-controls="mainNavList">
+          메뉴 열기
+        </button>
+      </div>
       <ul class="nav_list" id="mainNavList">
         <li><a href="#about">서비스 소개</a></li>
         <li><a href="#calendar">일정 캘린더</a></li>
@@ -85,6 +91,11 @@
         <button id="prevMonthButton" type="button" aria-label="이전 기간">◀</button>
         <h2 id="calendarTitle" aria-live="polite">캘린더</h2>
         <button id="nextMonthButton" type="button" aria-label="다음 기간">▶</button>
+      </div>
+      <div class="filter_container">
+        <div class="filter_btn_group" id="scheduleFilterGroup" role="group" aria-label="태그별 일정 필터">
+        </div>
+        <p id="filterResultInfo" class="filter_result_info" aria-live="polite"></p>
       </div>
       <div class="view_tab_group" role="tablist" aria-label="캘린더 뷰 전환">
         <button id="tabMonth" role="tab" aria-selected="true" aria-controls="calendarList" tabindex="0">월간</button>
