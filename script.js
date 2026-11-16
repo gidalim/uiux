@@ -56,6 +56,10 @@ const saveScheduleBtn = document.querySelector("#saveScheduleBtn");
 const modalContentCard = document.querySelector(".modal_card");
 const toastNotification = document.querySelector("#toastNotification");
 
+// 네비게이션 바
+const navLinks = document.querySelectorAll("#mainNavList a");
+const pageSections = document.querySelectorAll("main section[id]");
+
 let toastTimer = null;
 
 let Tags = {
@@ -795,8 +799,65 @@ window.addEventListener("resize", () => {
   }
 });
 
+function setActiveNavByHash(hash) {
+  const targetHash = hash && document.querySelector(hash) ? hash : "#about";
+
+  navLinks.forEach(link => {
+    if (link.getAttribute("href") === targetHash) {
+      link.setAttribute("aria-current", "location");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+navLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    const targetHash = link.getAttribute("href");
+    setActiveNavByHash(targetHash);
+  });
+});
+
+window.addEventListener("hashchange", () => {
+  setActiveNavByHash(window.location.hash);
+});
+
+window.addEventListener("popstate", () => {
+  setActiveNavByHash(window.location.hash);
+});
+
+function syncNavOnScroll() {
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 20) {
+    const lastSection = pageSections[pageSections.length - 1];
+    if (lastSection) setActiveNavByHash(`#${lastSection.id}`);
+    return;
+  }
+
+  const scrollPosition = window.scrollY + 180; 
+
+  pageSections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    const sectionHeight = section.offsetHeight;
+
+    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+      setActiveNavByHash(`#${section.id}`);
+    }
+  });
+}
+
+window.addEventListener("scroll", syncNavOnScroll, { passive: true });
+
+function initNavigation() {
+  if (window.location.hash) {
+    setActiveNavByHash(window.location.hash);
+  } else {
+    syncNavOnScroll();
+  }
+}
+
 // 초기 실행
 switchCalendarView(currentViewMode);
 renderInitialTags();
 renderCalendar();
 checkOnboardingStatus();
+initNavigation();

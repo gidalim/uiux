@@ -92,9 +92,48 @@ footer {
 }
 
 nav {
-    display: flex;
-    gap: 24px;
     margin-top: 24px;
+    border-bottom: 1px solid var(--input-border);
+    padding-bottom: 12px;
+}
+
+.nav_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+}
+
+.nav_list a {
+    position: relative;
+    display: inline-block;
+    padding: 6px 4px;
+    color: var(--text-sub);
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.nav_list a:hover {
+    color: var(--text-main);
+}
+
+.nav_list a[aria-current="location"] {
+    color: var(--accent-purple);
+    font-weight: 800;
+}
+
+.nav_list a[aria-current="location"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -13px; 
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background-color: var(--accent-purple);
 }
 
 nav a {
@@ -1152,6 +1191,25 @@ body.scroll-lock {
         flex-direction: column;
         align-items: stretch;
         gap: 8px;
+    }
+
+    .nav_list {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .nav_list a {
+        padding: 8px 12px;
+        border-radius: 8px;
+    }
+
+    .nav_list a[aria-current="location"] {
+        background-color: var(--bg-card);
+    }
+
+    .nav_list a[aria-current="location"]::after {
+        display: none; 
     }
 
     nav a {
