@@ -79,7 +79,7 @@ img {
 
 header {
     padding-top: 48px;
-    padding-bottom: 32px;
+    padding-bottom: 20px;
 }
 
 section {
@@ -91,10 +91,33 @@ footer {
     padding-bottom: 32px;
 }
 
-nav {
-    margin-top: 24px;
+/* 상단 고정 네비게이션 바 */
+.sticky_nav {
+    position: sticky;
+    top: 0;
+    z-index: 900; 
+    width: 100%;
+    background-color: var(--bg-page);
+    border-top: 1px solid var(--input-border);
     border-bottom: 1px solid var(--input-border);
-    padding-bottom: 12px;
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.3s ease;
+}
+
+.sticky_nav.is-stuck {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+}
+
+body.night-mode .sticky_nav.is-stuck {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    background-color: rgba(25, 25, 25, 0.92);
+}
+
+.nav_inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
 }
 
 .nav_list {
@@ -109,7 +132,7 @@ nav {
 .nav_list a {
     position: relative;
     display: inline-block;
-    padding: 6px 4px;
+    padding: 14px 4px;
     color: var(--text-sub);
     font-weight: 700;
     text-decoration: none;
@@ -130,16 +153,14 @@ nav {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -13px; 
+    bottom: -1px;
     height: 3px;
     border-radius: 3px 3px 0 0;
     background-color: var(--accent-purple);
 }
 
-nav a {
-    color: var(--text-sub);
-    font-weight: 700;
-    text-decoration: none;
+main section[id] {
+    scroll-margin-top: 76px;
 }
     
 h1 {
@@ -1176,7 +1197,7 @@ body.scroll-lock {
 
     header {
         padding-top: 28px;
-        padding-bottom: 20px;
+        padding-bottom: 16px;
     }
 
     h1 {
@@ -1187,33 +1208,18 @@ body.scroll-lock {
         font-size: 24px;
     }
 
-    nav {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-
     .nav_list {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
+        gap: 12px;
+        justify-content: space-between;
     }
 
     .nav_list a {
-        padding: 8px 12px;
-        border-radius: 8px;
+        padding: 12px 2px;
+        font-size: 14px;
     }
 
-    .nav_list a[aria-current="location"] {
-        background-color: var(--bg-card);
-    }
-
-    .nav_list a[aria-current="location"]::after {
-        display: none; 
-    }
-
-    nav a {
-        padding: 8px 0;
+    main section[id] {
+        scroll-margin-top: 64px;
     }
 
     .calendar_weekdays {

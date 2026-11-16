@@ -59,6 +59,7 @@ const toastNotification = document.querySelector("#toastNotification");
 // 네비게이션 바
 const navLinks = document.querySelectorAll("#mainNavList a");
 const pageSections = document.querySelectorAll("main section[id]");
+const stickyNav = document.querySelector(".sticky_nav");
 
 let toastTimer = null;
 
@@ -813,27 +814,32 @@ function setActiveNavByHash(hash) {
 
 navLinks.forEach(link => {
   link.addEventListener("click", () => {
-    const targetHash = link.getAttribute("href");
-    setActiveNavByHash(targetHash);
+    setActiveNavByHash(link.getAttribute("href"));
   });
 });
 
-window.addEventListener("hashchange", () => {
-  setActiveNavByHash(window.location.hash);
-});
-
-window.addEventListener("popstate", () => {
-  setActiveNavByHash(window.location.hash);
+["hashchange", "popstate"].forEach(eventName => {
+  window.addEventListener(eventName, () => {
+    setActiveNavByHash(window.location.hash);
+  });
 });
 
 function syncNavOnScroll() {
+  if (stickyNav) {
+    if (stickyNav.getBoundingClientRect().top <= 1) {
+      stickyNav.classList.add("is-stuck");
+    } else {
+      stickyNav.classList.remove("is-stuck");
+    }
+  }
+
   if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 20) {
     const lastSection = pageSections[pageSections.length - 1];
     if (lastSection) setActiveNavByHash(`#${lastSection.id}`);
     return;
   }
 
-  const scrollPosition = window.scrollY + 180; 
+  const scrollPosition = window.scrollY + 140;
 
   pageSections.forEach(section => {
     const sectionTop = section.offsetTop;
